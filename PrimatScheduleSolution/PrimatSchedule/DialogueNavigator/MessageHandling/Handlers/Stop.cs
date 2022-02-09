@@ -1,7 +1,6 @@
-﻿using DelayedSchedulePost;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace DialogueNavigator.MessageHandling.Handlers
+namespace PrimatScheduleBot
 {
     sealed class Stop : Command
     {

@@ -1,9 +1,7 @@
 ﻿using System;
-using DialogueNavigator;
-using SecuredData;
 
 
-namespace StartProject
+namespace PrimatScheduleBot
 {
     class Program
     {

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataBaseExploitation.Models;
-using DataBaseExploitation;
 using Quartz;
 using Telegram.Bot;
 
-namespace DelayedSchedulePost
+namespace PrimatScheduleBot
 {
     public class PostSender : IJob
     {

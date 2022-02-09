@@ -2,9 +2,8 @@
 using Telegram.Bot.Args;
 using System.Collections.Generic;
 using System;
-using DialogueNavigator.MessageHandling.Handlers;
 
-namespace DialogueNavigator
+namespace PrimatScheduleBot
 {
     public class Navigator
     {

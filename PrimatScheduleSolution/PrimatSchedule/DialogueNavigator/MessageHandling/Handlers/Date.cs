@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using DataBaseExploitation;
 
-namespace DialogueNavigator.MessageHandling.Handlers
+namespace PrimatScheduleBot
 {
     sealed class Date : Command, IValidatableObject
     {
@@ -16,7 +15,7 @@ namespace DialogueNavigator.MessageHandling.Handlers
         public Date(string date) : base(
             new Dictionary<MessageResult, string>
             {
-                { MessageResult.NOTOK, $"Невірні вхідні дані. Скористуйтеся довідкою {DialogueNavigator.Messages.Help}." }
+                { MessageResult.NOTOK, $"Невірні вхідні дані. Скористуйтеся довідкою {PrimatScheduleBot.Messages.Help}." }
             })
             => _date = date.Insert(0, $"{_year}-");
 

@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-namespace SecuredData
+namespace PrimatScheduleBot
 {
     public static class Data
     {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl;
 
-namespace DelayedSchedulePost
+namespace PrimatScheduleBot
 {
     public static class PostScheduler
     {

@@ -1,6 +1,6 @@
-﻿namespace DialogueNavigator
+﻿namespace PrimatScheduleBot
 {
-    static class Messages
+    public static class Messages
     {
         public const string Start = "/start";
         public const string Stop = "/stop";

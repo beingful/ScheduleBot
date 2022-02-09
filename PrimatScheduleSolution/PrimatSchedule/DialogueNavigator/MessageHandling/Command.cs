@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DialogueNavigator.MessageHandling
+namespace PrimatScheduleBot
 {
     abstract class Command
     {

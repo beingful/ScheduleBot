@@ -1,4 +1,4 @@
-﻿namespace DialogueNavigator.MessageHandling
+﻿namespace PrimatScheduleBot
 {
     enum MessageResult
     {
