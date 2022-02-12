@@ -16,8 +16,8 @@ namespace PrimatScheduleBot
             }
         }
 
-        public static string GetToken() => _dataJson.Value<string>("token");
+        public static string Token => _dataJson.Value<string>("token");
 
-        public static string GetConnectionString() => _dataJson.Value<string>("connectionString");
+        public static string ConnectionString => _dataJson.Value<string>("connectionString");
     }
 }

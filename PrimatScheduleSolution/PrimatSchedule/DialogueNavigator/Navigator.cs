@@ -17,10 +17,10 @@ namespace PrimatScheduleBot
             _bot = new TelegramBotClient(_token);
             _dialogue = new Dictionary<string, Func<long, string, string>>
             {
-                { Messages.Start, (long chatId, string token) => new Start(token, chatId).DoTaskAndGetMessage() },
-                { Messages.Stop, (long chatId, string token) => new Stop(chatId).DoTaskAndGetMessage() },
-                { Messages.Help, (long chatId, string token) => new Help().DoTaskAndGetMessage() },
-                { Messages.Date, (long chatId, string date) => new Date(date).DoTaskAndGetMessage() }
+                { Messages.Start, (long chatId, string token) => new Start(token, chatId).HandleAndSendAnswer() },
+                { Messages.Stop, (long chatId, string token) => new Stop(chatId).HandleAndSendAnswer() },
+                { Messages.Help, (long chatId, string token) => new Help().HandleAndSendAnswer() },
+                { Messages.Date, (long chatId, string date) => new Date(date).HandleAndSendAnswer() }
             };
         }
 
@@ -35,21 +35,23 @@ namespace PrimatScheduleBot
             long chatId = arguments.Message.Chat.Id;
             string message = arguments.Message.Text;
 
-            string answer = getAnswer(message, chatId);
-
-            _bot.SendTextMessageAsync(chatId, answer, Telegram.Bot.Types.Enums.ParseMode.Markdown, null, true);
+            SendAnswer(message, chatId);
         }
 
-        private string getAnswer(string message, long chatId)
+        private void SendAnswer(string message, long chatId)
         {
+            string answer = String.Empty;
+
             try
             {
-                return _dialogue[message](chatId, _token);
+                answer = _dialogue[message](chatId, _token);
             }
             catch
             {
-                return _dialogue[Messages.Date](chatId, message);
+                answer = _dialogue[Messages.Date](chatId, message);
             }
+
+            _bot.SendTextMessageAsync(chatId, answer, Telegram.Bot.Types.Enums.ParseMode.Markdown, null, true);
         }
     }
 }

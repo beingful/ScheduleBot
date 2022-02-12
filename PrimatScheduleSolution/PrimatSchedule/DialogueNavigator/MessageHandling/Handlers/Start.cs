@@ -7,25 +7,24 @@ namespace PrimatScheduleBot
         private readonly string _botId;
         private readonly long _chatId;
 
-        public Start(string botId, long chatId) :
-            base(new Dictionary<MessageResult, string>
+        public Start(string botId, long chatId) : base(new Dictionary<MessageResult, string>
             {
-                { MessageResult.OK, "Ви підписалися на щоденну розсилку розкладу. Очікуйте на повідомлення о 8:30 ранку."},
-                { MessageResult.NOTOK, "Ви вже підписані на щоденну розсилку розкладу."}
+                { MessageResult.ALLOWED, "Ви підписалися на щоденну розсилку розкладу. Очікуйте на повідомлення о 8:30 ранку."},
+                { MessageResult.DENIED, "Ви вже підписані на щоденну розсилку розкладу."}
             })
         {
             _botId = botId;
             _chatId = chatId;
         }
 
-        public override string DoTaskAndGetMessage()
+        public override string HandleAndSendAnswer()
         {
             if (PostScheduler.Start(_botId, _chatId).Result)
             {
-                return Messages.GetValueOrDefault(MessageResult.OK);
+                return Messages.GetValueOrDefault(MessageResult.ALLOWED);
             }
 
-            return Messages.GetValueOrDefault(MessageResult.NOTOK);
+            return Messages.GetValueOrDefault(MessageResult.DENIED);
         }
     }
 }

@@ -12,12 +12,13 @@ namespace PrimatScheduleBot
 
         static Date() => _year = DateTime.Now.Year;
 
-        public Date(string date) : base(
-            new Dictionary<MessageResult, string>
+        public Date(string date) : base(new Dictionary<MessageResult, string>
             {
-                { MessageResult.NOTOK, $"Невірні вхідні дані. Скористуйтеся довідкою {PrimatScheduleBot.Messages.Help}." }
+                { MessageResult.DENIED, $"Невірні вхідні дані. Скористуйтеся довідкою {PrimatScheduleBot.Messages.Help}." }
             })
-            => _date = date.Insert(0, $"{_year}-");
+        {
+            _date = date.Insert(0, $"{_year}-");
+        }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -25,7 +26,7 @@ namespace PrimatScheduleBot
 
             if (!IsDateInRightFormat() || !IsSuchADateExist())
             {
-                errors.Add(new ValidationResult(Messages.GetValueOrDefault(MessageResult.NOTOK)));
+                errors.Add(new ValidationResult(Messages.GetValueOrDefault(MessageResult.DENIED)));
             }
 
             return errors;
@@ -58,14 +59,14 @@ namespace PrimatScheduleBot
             }
         }
 
-        public override string DoTaskAndGetMessage()
+        public override string HandleAndSendAnswer()
         {
             if (IsSelfValidateSuccessful())
             {
-                return Querier.GetQuerySelection(_date).ToString();
+                return Querier.GetSchedule(_date).ToString();
             }
 
-            return Messages.GetValueOrDefault(MessageResult.NOTOK);
+            return Messages.GetValueOrDefault(MessageResult.DENIED);
         }
     }
 }

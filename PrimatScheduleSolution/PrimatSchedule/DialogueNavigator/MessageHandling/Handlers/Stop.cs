@@ -6,22 +6,21 @@ namespace PrimatScheduleBot
     {
         private readonly long _chatId;
 
-        public Stop(long chatId) :
-            base(new Dictionary<MessageResult, string>
+        public Stop(long chatId) : base(new Dictionary<MessageResult, string>
             {
-                { MessageResult.OK, "Ви відписалися від щоденної розсилки розкладу."},
-                { MessageResult.NOTOK, "Ви ще не підписані на щоденну розсилку розкладу."}
+                { MessageResult.ALLOWED, "Ви відписалися від щоденної розсилки розкладу."},
+                { MessageResult.DENIED, "Ви ще не підписані на щоденну розсилку розкладу."}
             })
-            => _chatId = chatId;
-
-        public override string DoTaskAndGetMessage()
         {
-            if (PostScheduler.Stop(_chatId).Result)
-            {
-                return Messages.GetValueOrDefault(MessageResult.OK);
-            }
+            _chatId = chatId;
+        }
 
-            return Messages.GetValueOrDefault(MessageResult.NOTOK);
+        public override string HandleAndSendAnswer()
+        {
+            bool canStop = PostScheduler.TryStop(_chatId).Result;
+            MessageResult result = canStop ? MessageResult.ALLOWED : MessageResult.DENIED;
+
+            return Messages.GetValueOrDefault(result);
          }
     }
 }

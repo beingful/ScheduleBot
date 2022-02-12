@@ -1,8 +1,8 @@
 ﻿namespace PrimatScheduleBot
 {
-    enum MessageResult
+    public enum MessageResult
     {
-        OK,
-        NOTOK
+        ALLOWED,
+        DENIED
     }
 }

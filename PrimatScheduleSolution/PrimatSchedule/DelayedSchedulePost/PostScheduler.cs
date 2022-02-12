@@ -24,7 +24,7 @@ namespace PrimatScheduleBot
                 return true;
             }
 
-            return default(bool);
+            return false;
         }
 
         private static IJobDetail CreateJob(string token, long chatId)
@@ -47,24 +47,24 @@ namespace PrimatScheduleBot
                 .Build();
         }
 
-        public static async Task<bool> Stop(long chatId)
+        public static async Task<bool> TryStop(long chatId)
         {
             if (IsSuchAJobExist(chatId).Result)
             {
                 return await _scheduler.DeleteJob(new JobKey($"{chatId}"));
             }
 
-            return default(bool);
+            return false;
         }
 
         public static async Task<bool> IsSuchAJobExist(long chatId)
         {
-            if (_scheduler != default(IScheduler))
+            if (_scheduler != null)
             {
                 return await _scheduler.CheckExists(new JobKey($"{chatId}"));
             }
 
-            return default(bool);
+            return false;
         }
     }
 }
