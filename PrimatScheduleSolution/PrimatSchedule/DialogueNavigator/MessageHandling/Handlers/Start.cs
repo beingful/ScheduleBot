@@ -1,30 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
-    sealed class Start : Command
+    public sealed class Start : ICommand, IHandler
     {
-        private readonly string _botId;
-        private readonly long _chatId;
+        private readonly string _token;
+        private readonly string _chatId;
+        private readonly string _message;
+        private const int _statesCount = 2;
+        private DialogueState _dialogue = new DialogueState();
+        private readonly Dictionary<DialogueState.States, Func<string>> _dialogueNavigator;
 
-        public Start(string botId, long chatId) : base(new Dictionary<MessageResult, string>
-            {
-                { MessageResult.ALLOWED, "Ви підписалися на щоденну розсилку розкладу. Очікуйте на повідомлення о 8:30 ранку."},
-                { MessageResult.DENIED, "Ви вже підписані на щоденну розсилку розкладу."}
-            })
+        public Start(string token, string chatId, string message)
         {
-            _botId = botId;
+            _token = token;
             _chatId = chatId;
+            _message = message;
+
+            _dialogueNavigator = new Dictionary<DialogueState.States, Func<string>>
+            {
+                { DialogueState.States.Default, () => AskForTime() },
+                { DialogueState.States.First, () => StartMailingList() }
+            };
         }
 
-        public override string HandleAndSendAnswer()
+        public string Execute(string message)
         {
-            if (PostScheduler.Start(_botId, _chatId).Result)
-            {
-                return Messages.GetValueOrDefault(MessageResult.ALLOWED);
-            }
+            string answer = _dialogueNavigator[_dialogue.CurrentState]();
+            _dialogue.ChangeState(_statesCount);
 
-            return Messages.GetValueOrDefault(MessageResult.DENIED);
+            return answer;
+        }
+
+        private string AskForTime() => "О котрій годині ви хочете отримувати сповіщення?";
+
+        private string StartMailingList()
+        {
+            DateTime time = MessageValidator.TryGetDateTime(_message);
+            PostScheduler.TryStart(_token, _chatId, time);
+
+            return $"Ви підписалися на щоденну розсилку розкладу о {time}.";
+        }
+
+        public void HandleReplyButton(string message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace PrimatScheduleBot
     {
         private static IScheduler _scheduler;
 
-        public static async Task<bool> Start(string token, long chatId)
+        public static async void TryStart(string token, string chatId, DateTime time)
         {
             if (!IsSuchAJobExist(chatId).Result)
             {
@@ -17,51 +17,52 @@ namespace PrimatScheduleBot
                 await _scheduler.Start();
 
                 IJobDetail job = CreateJob(token, chatId);
-                ITrigger trigger = CreateTrigger(chatId);
+                ITrigger trigger = CreateTrigger(chatId, time);
 
                 await _scheduler.ScheduleJob(job, trigger);
-
-                return true;
             }
 
-            return false;
+            else
+            {
+                throw new QuartzStartException();
+            }
         }
 
-        private static IJobDetail CreateJob(string token, long chatId)
+        private static IJobDetail CreateJob(string token, string chatId)
         {
             return JobBuilder.Create<PostSender>()
-                .WithIdentity($"{chatId}")
+                .WithIdentity(chatId)
                 .UsingJobData(nameof(token), token)
                 .UsingJobData(nameof(chatId), Convert.ToString(chatId))
                 .Build();
         }
 
-        private static ITrigger CreateTrigger(long chatId)
+        private static ITrigger CreateTrigger(string chatId, DateTime time)
         {
             return TriggerBuilder.Create()
-                .WithIdentity($"{chatId}")
-                .StartAt(DateTime.Now.AddSeconds(10))
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(10)
-                    .RepeatForever())
+                .WithIdentity(chatId)
+                .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(time.Hour, time.Minute))
                 .Build();
         }
 
-        public static async Task<bool> TryStop(long chatId)
+        public static async void TryStop(string chatId)
         {
             if (IsSuchAJobExist(chatId).Result)
             {
-                return await _scheduler.DeleteJob(new JobKey($"{chatId}"));
+                await _scheduler.DeleteJob(new JobKey(chatId));
             }
 
-            return false;
+            else
+            {
+                throw new QuartzStopException();
+            }
         }
 
-        public static async Task<bool> IsSuchAJobExist(long chatId)
+        public static async Task<bool> IsSuchAJobExist(string chatId)
         {
             if (_scheduler != null)
             {
-                return await _scheduler.CheckExists(new JobKey($"{chatId}"));
+                return await _scheduler.CheckExists(new JobKey(chatId));
             }
 
             return false;
