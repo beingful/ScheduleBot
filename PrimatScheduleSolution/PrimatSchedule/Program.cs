@@ -7,9 +7,9 @@ namespace PrimatScheduleBot
     {
         static void Main(string[] args)
         {
-            Bot navigator = new Bot(Data.Token);
+            Bot bot = new Bot(Data.Token);
 
-            navigator.StartChating();
+            bot.StartChating();
 
             Console.ReadKey();
         }

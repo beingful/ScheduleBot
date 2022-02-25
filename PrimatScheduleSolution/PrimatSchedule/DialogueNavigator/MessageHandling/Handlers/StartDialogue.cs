@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PrimatScheduleBot
+namespace PrimatScheduleBot.DialogueNavigator.MessageHandling.Handlers
 {
-    public sealed class Delete : ICommand, IHandler
+    class StartDialogue : ICommand, IHandler
     {
         private readonly string _chatId;
         private readonly string _message;
         private readonly BehaviourTree _tree;
 
-        public Delete(string chatId, string message, BehaviourTree tree)
+        public StartDialogue(string chatId, string message, BehaviourTree tree)
         {
             _chatId = chatId;
             _message = message;

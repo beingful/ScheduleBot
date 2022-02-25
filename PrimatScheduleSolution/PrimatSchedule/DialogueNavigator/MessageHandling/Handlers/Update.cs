@@ -5,11 +5,8 @@ namespace PrimatScheduleBot
     public sealed class Update : ICommand, IHandler
     {
         private readonly BehaviourTree _tree;
-        private readonly string _chatId;
 
-        public Update(string chatId) => _chatId = chatId;
-
-        public string Execute(string message)
+        public string Execute(string message, string chatId)
         {
             throw new NotImplementedException();
         }

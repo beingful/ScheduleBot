@@ -2,6 +2,9 @@
 {
     public class Buttons
     {
+        public const string Start = "Підписатись на розсилку";
+        public const string Stop = "Відписатись від розсилки";
+        public const string Edit = "Редагувати розклад";
         public const string Insert = "Додати";
         public const string Delete = "Видалити";
         public const string Update = "Змінити";

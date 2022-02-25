@@ -5,22 +5,16 @@ namespace PrimatScheduleBot
 {
     public class Edit : ICommand, IHandler
     {
-        private readonly BehaviourTree _tree;
         private readonly string _chatId;
-        private readonly string _message;
+        private readonly BehaviourTree _tree;
 
-        public Edit(string chatId) 
+        public Edit(string chatId, BehaviourTree tree)
         {
-            _tree = new BehaviourTree(new Dictionary<string, ICommand>
-            {
-                { Messages.Insert, new Insert(_chatId) },
-                { Messages.Update, new Update(_chatId) },
-                { Messages.Delete, new Delete(_chatId) }
-            });
             _chatId = chatId;
+            _tree = tree;
         }
 
-        public string Execute(string message)
+        public string Execute()
         {
             throw new NotImplementedException();
         }

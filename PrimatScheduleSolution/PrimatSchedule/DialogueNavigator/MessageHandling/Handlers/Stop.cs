@@ -2,13 +2,9 @@
 {
     public sealed class Stop : ICommand
     {
-        private readonly string _chatId;
-
-        public Stop(string chatId) => _chatId = chatId;
-
-        public string Execute(string message)
+        public string Execute(string message, string chatId)
         {
-            PostScheduler.TryStop(_chatId);
+            PostScheduler.TryStop(chatId);
 
             return "Ви відписалися від щоденної розсилки.";
         }

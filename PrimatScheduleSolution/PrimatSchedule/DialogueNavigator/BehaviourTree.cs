@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Telegram.Bot;
 using Telegram.Bot.Args;
 
 namespace PrimatScheduleBot
@@ -10,16 +9,23 @@ namespace PrimatScheduleBot
         public event Action OnCurrentStateChange;
         public readonly UIBehaviour UI;
         public readonly Dictionary<string, ICommand> StatesController;
-        private IHandler _currentState;
-        public IHandler CurrentState 
+        private IHandler _currentHandler;
+        private ICommand _currentCommand;
+
+        public ICommand CurrentCommand
         {
-            get => _currentState;
+            get => _currentCommand;
             set
             {
-                _currentState = value;
-                OnCurrentStateChange?.Invoke();
-            } 
-        }
+                _currentCommand = value;
+                _currentHandler = _currentCommand as IHandler;
+
+                if (_currentHandler != null)
+                {
+                    OnCurrentStateChange?.Invoke();
+                }
+            }
+        } 
 
         private BehaviourTree(Dictionary<string, ICommand> statesController)
         {
@@ -27,10 +33,9 @@ namespace PrimatScheduleBot
             OnCurrentStateChange += SendButtons;
         }
 
-        public BehaviourTree(Dictionary<string, ICommand> statesController, TelegramBotClient bot, 
-            long chatId, string message, Dictionary<string, Action> onClickButtonHandlers = null) : this(statesController)
+        public BehaviourTree(Dictionary<string, ICommand> statesController, UIBehaviour uI) : this(statesController)
         {
-            UI = new UIBehaviour(bot, chatId, message, onClickButtonHandlers);
+            UI = uI;
         }
 
         private void SendButtons()
@@ -46,12 +51,7 @@ namespace PrimatScheduleBot
         {
             string message = ev.CallbackQuery.Message.Text;
 
-            _currentState.HandleReplyButton(message);
-        }
-
-        public BehaviourTree(Dictionary<string, ICommand> statesController, Dictionary<string, Action> onClickButtonHandlers = null) : this(statesController)
-        {
-            UI = new UIBehaviour(onClickButtonHandlers);
+            _currentHandler.HandleReplyButton(message);
         }
     }
 }

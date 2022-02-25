@@ -33,11 +33,14 @@ namespace PrimatScheduleBot
 
             for (int i = 0; i < buttonsCaption.Count; i+=2)
             {
-                buttons.Add(new List<KeyboardButton>
+                var keyBoardButtons = new List<KeyboardButton>();
+
+                keyBoardButtons.Add(new KeyboardButton(buttonsCaption[i]));
+
+                if (i != buttonsCaption.Count - 1) 
                 {
-                    new KeyboardButton(buttonsCaption[i]),
-                    new KeyboardButton(buttonsCaption[i+1])
-                });
+                    keyBoardButtons.Add(new KeyboardButton(buttonsCaption[i]));
+                }
             }
 
             var keyboard = new ReplyKeyboardMarkup

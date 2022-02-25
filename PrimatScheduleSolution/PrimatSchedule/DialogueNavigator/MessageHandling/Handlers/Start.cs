@@ -6,28 +6,26 @@ namespace PrimatScheduleBot
     public sealed class Start : ICommand, IHandler
     {
         private readonly string _token;
-        private readonly string _chatId;
-        private readonly string _message;
         private const int _statesCount = 2;
-        private DialogueState _dialogue = new DialogueState();
-        private readonly Dictionary<DialogueState.States, Func<string>> _dialogueNavigator;
+        private DialogueState _dialogue;
+        private readonly Dictionary<DialogueState.States, Func<string, string, string>> _dialogueNavigator;
 
-        public Start(string token, string chatId, string message)
+        public Start(string token)
         {
-            _token = token;
-            _chatId = chatId;
-            _message = message;
+            _dialogue = new DialogueState();
 
-            _dialogueNavigator = new Dictionary<DialogueState.States, Func<string>>
+            _dialogueNavigator = new Dictionary<DialogueState.States, Func<string, string, string>>
             {
-                { DialogueState.States.Default, () => AskForTime() },
-                { DialogueState.States.First, () => StartMailingList() }
+                { DialogueState.States.Default, (message, chatId) => AskForTime() },
+                { DialogueState.States.First, (message, chatId) => StartMailingList(message, chatId) }
             };
+
+            _token = token;
         }
 
-        public string Execute(string message)
+        public string Execute()
         {
-            string answer = _dialogueNavigator[_dialogue.CurrentState]();
+            string answer = _dialogueNavigator[_dialogue.CurrentState](message, chatId);
             _dialogue.ChangeState(_statesCount);
 
             return answer;
@@ -35,10 +33,10 @@ namespace PrimatScheduleBot
 
         private string AskForTime() => "О котрій годині ви хочете отримувати сповіщення?";
 
-        private string StartMailingList()
+        private string StartMailingList(string message, string chatId)
         {
-            DateTime time = MessageValidator.TryGetDateTime(_message);
-            PostScheduler.TryStart(_token, _chatId, time);
+            DateTime time = MessageValidator.TryGetDateTime(message);
+            PostScheduler.TryStart(_token, chatId, time);
 
             return $"Ви підписалися на щоденну розсилку розкладу о {time}.";
         }
