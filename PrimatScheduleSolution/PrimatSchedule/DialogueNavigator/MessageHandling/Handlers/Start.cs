@@ -1,49 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
-    public sealed class Start : ICommand, IHandler
+    public sealed class Start : ICommand
     {
         private readonly string _token;
-        private const int _statesCount = 2;
-        private DialogueState _dialogue;
-        private readonly Dictionary<DialogueState.States, Func<string, string, string>> _dialogueNavigator;
+        private readonly UIBehaviour _ui;
+        private ICommand _currentCommand;
 
         public Start(string token)
         {
-            _dialogue = new DialogueState();
-
-            _dialogueNavigator = new Dictionary<DialogueState.States, Func<string, string, string>>
-            {
-                { DialogueState.States.Default, (message, chatId) => AskForTime() },
-                { DialogueState.States.First, (message, chatId) => StartMailingList(message, chatId) }
-            };
-
             _token = token;
+            _ui = new UIBehaviour(new Dictionary<string, UI>
+            {
+                { Buttons.Start, new UI("О котрій годині ви хочете отримувати сповіщення?") }
+            });
         }
 
-        public string Execute()
+        public UI Execute(ChatInfo info)
         {
-            string answer = _dialogueNavigator[_dialogue.CurrentState](message, chatId);
-            _dialogue.ChangeState(_statesCount);
+            UI ui;
 
-            return answer;
-        }
+            if (PostScheduler.IsSuchAJobExist(info.ChatId).Result)
+            {
+                throw new QuartzStartException();
+            }
 
-        private string AskForTime() => "О котрій годині ви хочете отримувати сповіщення?";
+            try
+            {
+                ui = _ui.StateMachine[info.LastMessage];
+            }
+            catch
+            {
+                _currentCommand = new Mailing(info.LastMessage, _token);
 
-        private string StartMailingList(string message, string chatId)
-        {
-            DateTime time = MessageValidator.TryGetDateTime(message);
-            PostScheduler.TryStart(_token, chatId, time);
+                ui = _currentCommand.Execute(info);
+            }
 
-            return $"Ви підписалися на щоденну розсилку розкладу о {time}.";
-        }
-
-        public void HandleReplyButton(string message)
-        {
-            throw new NotImplementedException();
+            return ui;
         }
     }
 }

@@ -4,6 +4,8 @@ namespace PrimatScheduleBot
 {
     public class MessageException : Exception
     {
-        protected MessageException(string message) : base(message) { }
+        public UI UI { get; }
+
+        public MessageException(UI ui) => UI = ui;
     }
 }

@@ -2,7 +2,9 @@
 {
     public class QuartzStopException : MessageException
     {
-        private const string _message = "Ви ще не підписані на щоденну розсилку розкладу.";
-        public QuartzStopException() : base(_message) { }
+        private const string _message = "Притормози, ти ще не підписаний на щоденну розсилку розкладу. " +
+            "Якщо хочеш відписатися, спершу підпишись.";
+
+        public QuartzStopException() : base(new UI(_message, Stickers.Back)) { }
     }
 }

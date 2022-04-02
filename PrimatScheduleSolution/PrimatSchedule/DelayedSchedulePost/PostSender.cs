@@ -14,7 +14,7 @@ namespace PrimatScheduleBot
             var bot = new TelegramBotClient(Token);
             var chatId = long.Parse(ChatId);
 
-            Schedule schedule = Querier.GetScheduleByDate(ChatId, DateTime.Today);
+            Schedule schedule = Querier.GetScheduleByDate(ChatId, DateTime.Today.ToString("yyyy-MM-dd"));
 
             await bot.SendTextMessageAsync(chatId, schedule.ToString(), Telegram.Bot.Types.Enums.ParseMode.Markdown, null, true);
         }

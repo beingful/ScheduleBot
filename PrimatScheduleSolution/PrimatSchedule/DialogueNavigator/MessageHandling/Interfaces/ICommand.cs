@@ -2,6 +2,6 @@
 {
     public interface ICommand
     {
-        public string Execute();
+        public UI Execute(ChatInfo info);
     }
 }
