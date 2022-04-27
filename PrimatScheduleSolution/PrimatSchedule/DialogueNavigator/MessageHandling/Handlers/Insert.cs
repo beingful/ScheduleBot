@@ -39,6 +39,9 @@ namespace PrimatScheduleBot
             else
             {
                 Event @event = GetNewEvent(info);
+
+                MessageValidator.ValidateTimeForDuplications(@event);
+
                 InsertEvent(@event);
 
                 ui = new UI("Я додав подію в твій розклад.", Stickers.Done);

@@ -40,6 +40,8 @@ namespace PrimatScheduleBot
             {
                 Event @event = GetModifiedEvent(info.LastMessage);
 
+                MessageValidator.ValidateTimeForDuplications(@event);
+
                 UpdateEvent(@event);
 
                 ui = new UI("Я змінив подію в розкладі.", Stickers.Done);

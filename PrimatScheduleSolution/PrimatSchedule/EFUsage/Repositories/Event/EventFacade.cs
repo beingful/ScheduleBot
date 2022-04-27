@@ -10,29 +10,15 @@ namespace PrimatScheduleBot
 
         public EventFacade() => _repository = new EventRepository();
 
-        private IEnumerable<Event> GetAllWhere(Func<Event, bool> isCorrect) 
-            => _repository.GetAll().Where(@event => isCorrect(@event));
+        private IEnumerable<Event> GetAll() => _repository.GetAll();
 
-        private void ValidateEvent(Event @event)
-        {
-            var timeValidator = new EventTimeValidation(@event, _repository);
+        private IEnumerable<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event));
 
-            MessageValidator.ValidateTimeForDuplications(timeValidator.IsValid());
-        }
+        public bool DoesAnyEventExist(Func<Event, bool> isCorrect) => GetAll().Any(@event => isCorrect(@event));
 
-        public void Insert(Event @event) 
-        {
-            ValidateEvent(@event);
+        public void Insert(Event @event) => _repository.Insert(@event);
 
-            _repository.Insert(@event);
-        }
-
-        public void Update(Event @event) 
-        {
-            ValidateEvent(@event);
-
-            _repository.Update(@event);
-        }
+        public void Update(Event @event) => _repository.Update(@event);
 
         public void RemoveAllBeforeToday() 
         {

@@ -54,6 +54,7 @@ namespace PrimatScheduleBot
 
         public static void ValidateQuartzStop(bool isCorrect) => Validate(isCorrect, new QuartzStopException());
 
-        public static void ValidateTimeForDuplications(bool isCorrect) => Validate(isCorrect, new EventDateTimeDuplicationException());
+        public static void ValidateTimeForDuplications(Event @event) 
+            => Validate(@event, new EventTimeAttribute(), new EventDateTimeDuplicationException());
     }
 }
