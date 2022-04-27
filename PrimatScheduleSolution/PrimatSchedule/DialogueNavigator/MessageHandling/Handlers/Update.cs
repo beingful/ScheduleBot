@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
     public sealed class Update : ICommand
     {
-        private readonly UIBehaviour _uiBehaviour;
         private readonly Event _event;
-        private readonly Func<string, Event, int> _updateEvent;
+        private readonly UIBehaviour _uiBehaviour;
+        private readonly IPeriodicity _period;
 
-        public Update(Event @event, Func<string, Event, int> updateEvent)
+        public Update(Event @event, IPeriodicity period)
         {
             _event = @event;
-            _updateEvent = updateEvent;
-            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI>
-            {
-                { Buttons.Update, GetUI(@event) }
+            _period = period;
+            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> 
+            { 
+                { Buttons.Update, GetUI(@event, period) } 
             });
         }
 
-        private UI GetUI(Event @event)
+        private UI GetUI(Event @event, IPeriodicity period)
         {
             var parser = new EventToMessage(@event);
 
-            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n";
-
-            message += parser.ParseAll();
+            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n" 
+                + $"`{ parser.ParseAll(period) }`";
 
             return new UI(message);
         }
@@ -35,22 +32,34 @@ namespace PrimatScheduleBot
         {
             UI ui;
 
-            try
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
             {
-                ui = _uiBehaviour.StateMachine[info.LastMessage];
+                ui = _uiBehaviour.GetUI(info.LastMessage);
             }
-            catch
+            else
             {
-                var result = new CommandResult();
+                Event @event = GetModifiedEvent(info.LastMessage);
 
-                var updating = Task.Run(() => _updateEvent(info.ChatId, _event));
+                UpdateEvent(@event);
 
-                int resultIndex = updating.Result;
-
-                ui = result._results[resultIndex];
+                ui = new UI("Я змінив подію в розкладі.", Stickers.Done);
             }
 
             return ui;
+        }
+
+        private Event GetModifiedEvent(string message)
+        {
+            var converter = new MessageToEvent(message, _period, _event);
+
+            return converter.Convert();
+        }
+
+        private void UpdateEvent(Event @event)
+        {
+            using var facade = new EventFacade();
+
+            facade.Update(@event);
         }
     }
 }

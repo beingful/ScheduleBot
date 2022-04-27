@@ -17,7 +17,7 @@ namespace PrimatScheduleBot
         {
             var timeValidator = new EventTimeValidation(@event, _repository);
 
-            Validator.CheckDateTimeDuplications(timeValidator.IsValid());
+            MessageValidator.ValidateTimeForDuplications(timeValidator.IsValid());
         }
 
         public void Insert(Event @event) 
@@ -48,7 +48,8 @@ namespace PrimatScheduleBot
             _repository.Remove(@event);
         }
 
-        public IEnumerable<Event> GetByDate(DateTime date) => GetAllWhere(@event => @event.Date == date);
+        public IEnumerable<Event> GetByDate(string chatId, DateTime date) 
+            => GetAllWhere(@event => @event.ChatId == chatId && @event.Date == date);
 
         public void Dispose() => _repository.Dispose();
     }

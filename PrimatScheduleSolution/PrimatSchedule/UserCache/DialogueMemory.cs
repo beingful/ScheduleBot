@@ -8,21 +8,14 @@ namespace PrimatScheduleBot
 
         public ICommand Get(string key)
         {
-            ICommand cacheEntry;
+            ICommand cacheEntry = default(ICommand);
 
-            try
-            {
-                cacheEntry = _cache.Get<ICommand>(key);
-            }
-            catch
-            {
-                cacheEntry = null;
-            }
+            _cache.TryGetValue(key, out cacheEntry);
 
             return cacheEntry;
         }
 
-        public void Set(string key, ref ICommand item)
+        public void Set(string key, ICommand item)
         {
             if (item != null)
             {

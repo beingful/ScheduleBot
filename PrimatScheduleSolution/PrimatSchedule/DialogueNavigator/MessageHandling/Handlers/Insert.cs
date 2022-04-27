@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
     public sealed class Insert : ICommand
     {
         private readonly UIBehaviour _uiBehaviour;
-        private readonly Func<string, Event, int> _insertEvent;
+        private readonly IPeriodicity _period;
 
-        public Insert(Func<string, Event, int> insertEvent)
+        public Insert(string button, IPeriodicity period)
         {
-            _insertEvent = insertEvent;
+            _period = period;
             _uiBehaviour = new UIBehaviour(new Dictionary<string, UI>
             {
-                { Buttons.Date, GetUI(Buttons.Date, nameof(Buttons.Day)) },
-                { Buttons.Day, GetUI(Buttons.Day, nameof(Buttons.Date)) }
+                { button, GetUI(period.Name) }
             });
         }
 
-        private UI GetUI(string required, string excluded)
+        private UI GetUI(string required)
         {
-            var template = new Template();
+            var display = new PropertiesDisplay(_period);
 
-            string message = "Так тримати! Погнали далі!\nЗаповни і надійшли мені дані про подію в наступному форматі (графа "
-                + $"{required.ToLower()}"
-                + " обов'язкова для заповнення):\n\n";
-
-            message += $"`{template.ToMessageAllExcluded(excluded)}`";
+            string message = "Так тримати! Погнали далі!\n" +
+                "Заповни і надійшли мені дані про подію в наступному форматі (графа "
+                + $"{ required } обов'язкова для заповнення):\n\n" +
+                $"`{ display }`";
 
             return new UI(message, Stickers.Freedom);
         }
@@ -35,23 +32,33 @@ namespace PrimatScheduleBot
         {
             UI ui;
 
-            try
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
             {
-                ui = _uiBehaviour.StateMachine[info.LastMessage];
+                ui = _uiBehaviour.GetUI(info.LastMessage);
             }
-            catch
+            else
             {
-                var result = new CommandResult();
-                var converter = new MessageToEvent(info.LastMessage, new Event());
+                Event @event = GetNewEvent(info);
+                InsertEvent(@event);
 
-                Event newEvent = converter.Parse();
-
-                int resultIndex = _insertEvent.Invoke(info.ChatId, newEvent);
-
-                ui = result._results[resultIndex];
+                ui = new UI("Я додав подію в твій розклад.", Stickers.Done);
             }
 
             return ui;
+        }
+
+        private Event GetNewEvent(ChatInfo info)
+        {
+            var converter = new MessageToEvent(info.ChatId, info.LastMessage, _period);
+
+            return converter.Convert();
+        }
+
+        private void InsertEvent(Event @event)
+        {
+            using var facade = new EventFacade();
+
+            facade.Insert(@event);
         }
     }
 }

@@ -25,14 +25,11 @@ namespace PrimatScheduleBot
 
         public UI Execute(ChatInfo info)
         {
-            try
-            {
-                return _ui.StateMachine[info.LastMessage];
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new IncorrectMessageException();
-            }
+            UI ui = _ui.GetUI(info.LastMessage);
+
+            MessageValidator.ValidateMessage(ui != null);
+
+            return ui;
         }
     }
 }

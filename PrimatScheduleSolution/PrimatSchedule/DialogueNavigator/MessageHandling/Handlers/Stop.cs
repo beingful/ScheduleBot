@@ -1,35 +1,31 @@
-﻿using System.Collections.Generic;
-
-namespace PrimatScheduleBot
+﻿namespace PrimatScheduleBot
 {
     public sealed class Stop : ICommand
     {
-        private readonly UIBehaviour _ui;
+        private readonly UIBehaviour _uiBehaviour;
 
-        public Stop()
-        {
-            _ui = new UIBehaviour(new Dictionary<string, UI>
-            {
-                { Buttons.Stop, new UI("Ви відписалися від щоденної розсилки.") }
-            });
-        }
+        public Stop(UIBehaviour uiBehaviour) => _uiBehaviour = uiBehaviour;
 
         public UI Execute(ChatInfo info)
         {
-            UI ui;
+            Validate(info.LastMessage);
+            TryStop(info.ChatId);
 
-            try
-            {
-                ui = _ui.StateMachine[info.LastMessage];
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new IncorrectMessageException();
-            }
+            return _uiBehaviour.GetUI(info.LastMessage);
+        }
 
-            PostScheduler.TryStop(info.ChatId);
+        private void TryStop(string chatId)
+        {
+            var mailing = new Mailing(chatId);
 
-            return ui;
+            mailing.Stop();
+        }
+
+        private void Validate(string message)
+        {
+            bool doesKeyExist = _uiBehaviour.IsSuchAKeyExist(message);
+
+            MessageValidator.ValidateMessage(doesKeyExist);
         }
     }
 }

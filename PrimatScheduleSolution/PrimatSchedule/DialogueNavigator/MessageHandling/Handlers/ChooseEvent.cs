@@ -6,25 +6,24 @@ namespace PrimatScheduleBot
     public class ChooseEvent : ICommand
     {
         public readonly UIBehaviour _uiBehaviour;
-        private readonly Schedule _schedule;
-        private readonly Func<string, Event, int> _updateEvent;
+        private readonly List<Event> _schedule;
+        private readonly IPeriodicity _period;
         private ICommand _currentCommand;
+        private UI _ui;
 
-        public ChooseEvent(Schedule schedule, Func<string, Event, int> updateEvent)
+        public ChooseEvent(List<Event> schedule, IPeriodicity period)
         {
             _schedule = schedule;
-            _updateEvent = updateEvent;
-            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI>
-            {
-                { Buttons.Event, GetUI() }
-            });
+            _period = period;
+            _ui = GetUI();
+            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> { { Buttons.Event, _ui } });
         }
 
         private UI GetUI()
         {
             var buttons = new List<string>();
 
-            for (int i = 0; i < _schedule.Events.Count; i++)
+            for (int i = 0; i < _schedule.Count; i++)
             {
                 buttons.Add((i + 1).ToString());
             }
@@ -36,11 +35,11 @@ namespace PrimatScheduleBot
         {
             UI ui;
 
-            try
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
             {
-                ui = _uiBehaviour.StateMachine[info.LastMessage];
+                ui = _uiBehaviour.GetUI(info.LastMessage);
             }
-            catch (KeyNotFoundException)
+            else
             {
                 if (_currentCommand is null)
                 {
@@ -55,26 +54,25 @@ namespace PrimatScheduleBot
 
         private void TryChangeCurrentCommand(string message)
         {
-            try
-            {
-                int index = Convert.ToInt32(message);
-                Event selectedEvent = _schedule[index];
+            MessageValidator.ValidateMessage(_ui.ButtonCaptions.Contains(message));
 
-                _currentCommand = new Command(new UIBehaviour(new Dictionary<string, UI>
-                {
-                    { message, new UI("Що ви хочете зробити з цією подією?", new List<string>
-                    { Buttons.Get, Buttons.Delete, Buttons.Update }) }
-                }), new StateBehaviour(new Dictionary<string, ICommand>
-                {
-                    { Buttons.Update, new Update(selectedEvent, _updateEvent) },
-                    { Buttons.Delete, new Delete(selectedEvent.Id) },
-                    { Buttons.Get, new Delete(selectedEvent.Id) }
-                }));
-            }
-            catch
+            int index = Convert.ToInt32(message);
+            Event selectedEvent = _schedule[index];
+
+            _currentCommand = GetCommand(message, selectedEvent);
+        }
+
+        private ICommand GetCommand(string message, Event @event)
+        {
+            return new Command(new UIBehaviour(new Dictionary<string, UI>
             {
-                throw new IncorrectMessageException();
-            }
+                { message, new UI("Що ви хочете зробити з цією подією?",
+                new List<string> { Buttons.Delete, Buttons.Update }) }
+            }), new StateBehaviour(new Dictionary<string, ICommand>
+            {
+                { Buttons.Update, new Update(@event, _period) },
+                { Buttons.Delete, new Delete(@event.Id) }
+            }));
         }
     }
 }

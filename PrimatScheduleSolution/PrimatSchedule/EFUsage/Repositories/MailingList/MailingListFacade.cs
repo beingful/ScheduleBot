@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PrimatScheduleBot
@@ -9,7 +10,7 @@ namespace PrimatScheduleBot
 
         public MailingListFacade() => _repository = new MailingListRepository();
 
-        private MailingList GetByChatId(string chatId) => _repository.GetAll().First(list => list.ChatId == chatId);
+        private MailingList GetByChatId(string chatId) => GetAll().First(list => list.ChatId == chatId);
 
         private void Insert(string chatId, TimeSpan time)
         {
@@ -29,6 +30,8 @@ namespace PrimatScheduleBot
 
             _repository.Insert(list);
         }
+
+        public IEnumerable<MailingList> GetAll() => _repository.GetAll();
 
         public void InsertOrUpdate(string chatId, TimeSpan time)
         {

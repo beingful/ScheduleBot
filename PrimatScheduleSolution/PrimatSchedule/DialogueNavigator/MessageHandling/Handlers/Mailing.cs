@@ -1,58 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace PrimatScheduleBot
 {
-    public class Mailing : ICommand
+    public class Mailing : IStopable, IStartable
     {
-        private readonly string _token;
-        private readonly UIBehaviour _uiBehaviour;
+        private readonly string _chatId;
+        private readonly MailingListFacade _facade;
 
-        [Time]
-        public string MailTime { get; private set; }
-
-        public Mailing(string message, string token) 
+        public Mailing(string chatId) 
         {
-            _token = token;
-            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI>
-            {
-                { message, new UI($"Ви підписалися на щоденну розсилку.") }
-            });
+            _chatId = chatId;
+            _facade = new MailingListFacade();
         }
 
-        public UI Execute(ChatInfo info)
+        private void StartMailingList(TimeSpan time, string token)
         {
-            UI ui;
+            var data = new PostSenderData(token, _chatId);
+            var scheduler = new Scheduler(_chatId);
 
-            MailTime = info.LastMessage;
-
-            try
-            {
-                ui = _uiBehaviour.StateMachine[info.LastMessage];
-            }
-            catch
-            {
-                throw new IncorrectMessageException();
-            }
-
-            Validate();
-
-            StartMailingList(info);
-
-            return ui;
+            scheduler.Start<PostSender>(time, data);
         }
 
-        private void StartMailingList(ChatInfo info)
+        private void StopMailingList()
         {
-            PostScheduler.Start(_token, info.ChatId, TimeSpan.Parse(MailTime));
+            var scheduler = new Scheduler(_chatId);
+
+            scheduler.TryStop();
         }
 
-        private void Validate()
+        public void Start(TimeSpan time, string token)
         {
-            var context = new ValidationContext(this);
+            StartMailingList(time, token);
 
-            Validator.ValidateObject(this, context, true);
+            _facade.InsertOrUpdate(_chatId, time);
+        }
+
+        public void Stop()
+        {
+            StopMailingList();
+
+            _facade.Remove(_chatId);
         }
     }
 }

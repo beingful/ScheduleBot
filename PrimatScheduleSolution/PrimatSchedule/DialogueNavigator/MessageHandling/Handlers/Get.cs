@@ -1,16 +1,20 @@
-﻿namespace PrimatScheduleBot
+﻿using System.Collections.Generic;
+
+namespace PrimatScheduleBot
 {
     public class Get : ICommand
     {
-        private readonly Schedule _schedule;
+        private readonly List<Event> _schedule;
 
-        public Get(Schedule schedule) => _schedule = schedule;
+        public Get(List<Event> schedule) => _schedule = schedule;
 
         public UI Execute(ChatInfo info)
         {
             var parser = new ScheduleToMessage(_schedule);
 
-            return new UI(parser.ToMessage(), Stickers.Walking);
+            var scheduleInMessage = parser.Convert();
+
+            return new UI(scheduleInMessage, Stickers.Walking);
         }
     }
 }

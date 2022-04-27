@@ -1,36 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PrimatScheduleBot
 {
     public class ChooseSchedule : ICommand
     {
-        private readonly Schedule _schedule;
-        private readonly ICommand _currentCommand;
+        private readonly ICommand _currentState;
+        private readonly List<Event> _schedule;
 
-        public ChooseSchedule(string chatId, string dayOrDate, 
-            Func<string, string, Schedule> getEvent, Func<string, Event, int> updateEvent) 
+        public ChooseSchedule(string chatId, DateTime date, IPeriodicity period) 
         {
-            _schedule = getEvent(chatId, dayOrDate);
-
-            _currentCommand = new Command(new UIBehaviour(new Dictionary<string, UI>
+            _currentState = new Command(new UIBehaviour(new Dictionary<string, UI>
             {
-                { dayOrDate.ToString(), new UI("Що робимо далі?", new List<string> { Buttons.Get, Buttons.Event }) }
+                { date.ToString(), new UI("Що робимо далі?", new List<string> { Buttons.Get, Buttons.Event }) }
             }), new StateBehaviour(new Dictionary<string, ICommand>
             {
                 { Buttons.Get, new Get(_schedule) },
-                { Buttons.Event, new ChooseEvent(_schedule, updateEvent) }
+                { Buttons.Event, new ChooseEvent(_schedule, period) }
             }));
+
+            _schedule = GetSchedule(chatId, date);
+        }
+
+        private List<Event> GetSchedule(string chatId, DateTime date)
+        {
+            var facade = new EventFacade();
+
+            return facade.GetByDate(chatId, date).ToList();
         }
 
         public UI Execute(ChatInfo info) 
         {
-            if (_schedule.Events.Count < 0)
-            {
-                throw new NoOneScheduleException();
-            }
+            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count);
 
-            return _currentCommand.Execute(info);
+            return _currentState.Execute(info);
         }
     }
 }

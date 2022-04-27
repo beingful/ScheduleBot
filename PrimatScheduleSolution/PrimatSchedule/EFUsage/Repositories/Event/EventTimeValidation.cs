@@ -15,14 +15,15 @@ namespace PrimatScheduleBot
 
         public bool IsValid()
         {
-            return _repository
+            return !_repository
                 .GetAll()
                 .Any(@event => DoesIntersectionsExist(@event));
         }
 
         private bool DoesIntersectionsExist(Event @event)
         {
-            return _event.ChatId == @event.ChatId
+            return _event.Id != @event.Id
+                && _event.ChatId == @event.ChatId
                 && _event.Date == @event.Date
                 && ((@event.StartTime >= _event.StartTime && @event.StartTime < _event.EndTime)
                     || (@event.EndTime > _event.StartTime && @event.EndTime <= _event.EndTime)

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PrimatScheduleBot
+﻿namespace PrimatScheduleBot
 {
     public class Command : ICommand
     {
         private readonly UIBehaviour _uiBehaviour;
         private readonly StateBehaviour _stateBehaviour;
-        private ICommand _currentCommand;
 
         public Command(UIBehaviour uiBehaviour, StateBehaviour stateBehaviour)
         {
@@ -19,38 +15,21 @@ namespace PrimatScheduleBot
         {
             UI ui;
 
-            try
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
             {
-                ui = _uiBehaviour.StateMachine[info.LastMessage];
-                //_currentCommand = null;
+                ui = _uiBehaviour.GetUI(info.LastMessage);
             }
-            catch
+            else
             {
                 TryChangeCurrentCommand(info.LastMessage);
 
-                ui = ExecuteNext(info);
+                ui = _stateBehaviour.CurrentState.Execute(info);
             }
 
             return ui;
         }
 
-        private UI ExecuteNext(ChatInfo info)
-        {
-            try
-            {
-                return _currentCommand.Execute(info);
-            }
-            catch (NullReferenceException)
-            {
-                throw new IncorrectMessageException();
-            }
-        }
-
-        private void TryChangeCurrentCommand(string message)
-        {
-            _currentCommand = _stateBehaviour
-                                    .StateMachine
-                                    .GetValueOrDefault(message) ?? _currentCommand;
-        }
+        private void TryChangeCurrentCommand(string message) 
+            => _stateBehaviour.TryChangeCurrentState(message);
     }
 }

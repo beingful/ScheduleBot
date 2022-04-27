@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace PrimatScheduleBot
 {
@@ -11,12 +10,16 @@ namespace PrimatScheduleBot
 
         public UI Execute(ChatInfo info)
         {
-            var result = new CommandResult();
-            var removing = Task.Run(() => Querier.DeleteEvent(_eventId));
+            DeleteEvent();
 
-            int resultIndex = removing.Result;
+            return new UI("Я видалив подію із розкладу.", Stickers.Done); ;
+        }
 
-            return result._results[resultIndex];
+        private void DeleteEvent()
+        {
+            using var facade = new EventFacade();
+
+            facade.Remove(_eventId);
         }
     }
 }
