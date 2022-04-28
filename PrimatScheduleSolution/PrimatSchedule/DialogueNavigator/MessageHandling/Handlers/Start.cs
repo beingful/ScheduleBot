@@ -2,6 +2,7 @@
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class Start : ICommand
     {
         private readonly string _token;

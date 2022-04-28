@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class StateBehaviour
     {
         public readonly Dictionary<string, ICommand> StateMachine;
@@ -14,21 +15,16 @@ namespace PrimatScheduleBot
 
         public ICommand CurrentState { get; private set; }
 
-        public ICommand /*void*/ TryChangeCurrentState(string message, ICommand curcommand)
+        public void TryChangeCurrentState(string message)
         {
-            ICommand command = curcommand;
-
             if (StateMachine.ContainsKey(message))
             {
-                command = StateMachine[message];
-                //CurrentState = StateMachine[message];
+                CurrentState = StateMachine[message].DeepClone();
             }
             else
             {
-                MessageValidator.ValidateMessage(command != null);
+                MessageValidator.ValidateMessage(CurrentState != null);
             }
-
-            return command;
         }
     }
 }

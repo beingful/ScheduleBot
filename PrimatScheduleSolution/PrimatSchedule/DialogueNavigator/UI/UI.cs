@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class UI
     {
         public readonly string Question;

@@ -2,6 +2,7 @@
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class Day : ICalendarDay, IPeriodicity
     {
         public Day() => Name = Buttons.Day;

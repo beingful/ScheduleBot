@@ -1,5 +1,8 @@
-﻿namespace PrimatScheduleBot
+﻿using System;
+
+namespace PrimatScheduleBot
 {
+    [Serializable]
     public sealed class Stop : ICommand
     {
         private readonly UIBehaviour _uiBehaviour;

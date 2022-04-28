@@ -1,10 +1,12 @@
-﻿namespace PrimatScheduleBot
+﻿using System;
+
+namespace PrimatScheduleBot
 {
+    [Serializable]
     public class Command : ICommand
     {
         private readonly UIBehaviour _uiBehaviour;
         public readonly StateBehaviour _stateBehaviour;
-        private ICommand _currentState;
 
         public Command(UIBehaviour uiBehaviour, StateBehaviour stateBehaviour)
         {
@@ -24,13 +26,12 @@
             {
                 TryChangeCurrentCommand(info.LastMessage);
 
-                ui = _currentState.Execute(info);
+                ui = _stateBehaviour.CurrentState.Execute(info);
             }
 
             return ui;
         }
 
-        private void TryChangeCurrentCommand(string message) 
-            => _currentState = _stateBehaviour.TryChangeCurrentState(message, _currentState);
+        private void TryChangeCurrentCommand(string message) => _stateBehaviour.TryChangeCurrentState(message);
     }
 }

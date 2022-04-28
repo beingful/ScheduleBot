@@ -10,7 +10,6 @@ namespace PrimatScheduleBot
     {
         private readonly TelegramBotClient _bot;
         private readonly MemorableStateBehaviour _stateBehaviour;
-        private ICommand _currentState;
 
         public Bot(string token)
         {
@@ -59,11 +58,11 @@ namespace PrimatScheduleBot
 
             try
             {
-                _currentState = _stateBehaviour.TryChangeCurrentState(info.ChatId, info.LastMessage);
+                _stateBehaviour.TryChangeCurrentState(info.ChatId, info.LastMessage);
 
-                ui = _currentState.Execute(info);
+                ui = _stateBehaviour.CurrentState.Execute(info);
 
-                _stateBehaviour.SaveCurrentCommandInCache(info.ChatId, _currentState);
+                _stateBehaviour.SaveCurrentCommandInCache(info.ChatId);
             }
             catch (MessageException exc)
             {

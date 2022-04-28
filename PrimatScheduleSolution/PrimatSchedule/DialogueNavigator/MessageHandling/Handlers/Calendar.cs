@@ -2,6 +2,7 @@
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class Calendar<T> : ICommand where T : ICalendarDay, new()
     {
         private readonly UIBehaviour _uiBehaviour;
