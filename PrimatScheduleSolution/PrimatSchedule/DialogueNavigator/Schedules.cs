@@ -25,7 +25,7 @@ namespace PrimatScheduleBot
             {
                 var mailing = new Mailing(list.ChatId);
 
-                mailing.Start(list.Time, _token);
+                mailing.StartMailingList(list.Time, _token);
             }
         }
 

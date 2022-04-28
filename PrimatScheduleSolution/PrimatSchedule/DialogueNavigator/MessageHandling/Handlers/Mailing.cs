@@ -13,7 +13,7 @@ namespace PrimatScheduleBot
             _facade = new MailingListFacade();
         }
 
-        private void StartMailingList(TimeSpan time, string token)
+        public void StartMailingList(TimeSpan time, string token)
         {
             var data = new PostSenderData(token, _chatId);
             var scheduler = new Scheduler(_chatId);

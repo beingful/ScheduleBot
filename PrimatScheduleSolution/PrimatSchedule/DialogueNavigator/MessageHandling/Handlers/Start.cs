@@ -16,9 +16,9 @@ namespace PrimatScheduleBot
 
         public UI Execute(ChatInfo info)
         {
-            UI ui; 
+            UI ui;
 
-            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage)) 
             {
                 ui = _uiBehaviour.GetUI(info.LastMessage);
             }
@@ -35,7 +35,7 @@ namespace PrimatScheduleBot
         private void TryStart(ChatInfo info)
         {
             MessageValidator.ValidateMessage(_mailingList is null);
-            
+
             TimeSpan time = TryGetTime(info.LastMessage);
 
             _mailingList = new Mailing(info.ChatId);

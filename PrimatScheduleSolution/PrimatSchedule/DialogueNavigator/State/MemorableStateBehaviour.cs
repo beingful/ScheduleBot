@@ -15,23 +15,26 @@ namespace PrimatScheduleBot
 
         public ICommand CurrentState { get => _stateBehaviour.CurrentState; }
 
-        private void TrySetCurrentStateFromCache(string chatId)
+        private ICommand TrySetCurrentStateFromCache(string chatId)
         {
             ICommand state = _memory.Get(chatId);
 
-            if (state != default(ICommand))
-            {
-                _stateBehaviour = new StateBehaviour(_stateBehaviour.StateMachine, state);
-            }
+            //_stateBehaviour = new StateBehaviour(_stateBehaviour.StateMachine, state);
+
+            //return state;
+
+            return state;
         }
 
-        public void TryChangeCurrentState(string chatId, string message)
+        public ICommand /*void*/ TryChangeCurrentState(string chatId, string message)
         {
-            TrySetCurrentStateFromCache(chatId);
+            ICommand command = TrySetCurrentStateFromCache(chatId);
 
-            _stateBehaviour.TryChangeCurrentState(message);
+            command = _stateBehaviour.TryChangeCurrentState(message, command);
+
+            return command;
         }
 
-        public void SaveCurrentCommandInCache(string chatId) => _memory.Set(chatId, CurrentState);
+        public void SaveCurrentCommandInCache(string chatId, ICommand currentState) => _memory.Set(chatId, currentState);
     }
 }

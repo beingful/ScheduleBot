@@ -28,7 +28,7 @@ namespace PrimatScheduleBot
         {
             list.Time = time;
 
-            _repository.Insert(list);
+            _repository.Update(list);
         }
 
         public IEnumerable<MailingList> GetAll() => _repository.GetAll();

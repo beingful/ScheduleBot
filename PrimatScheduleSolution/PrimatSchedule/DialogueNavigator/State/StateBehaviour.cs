@@ -14,16 +14,21 @@ namespace PrimatScheduleBot
 
         public ICommand CurrentState { get; private set; }
 
-        public void TryChangeCurrentState(string message)
+        public ICommand /*void*/ TryChangeCurrentState(string message, ICommand curcommand)
         {
+            ICommand command = curcommand;
+
             if (StateMachine.ContainsKey(message))
             {
-                CurrentState = StateMachine[message];
+                command = StateMachine[message];
+                //CurrentState = StateMachine[message];
             }
-            else 
+            else
             {
-                MessageValidator.ValidateMessage(CurrentState != null);
+                MessageValidator.ValidateMessage(command != null);
             }
+
+            return command;
         }
     }
 }

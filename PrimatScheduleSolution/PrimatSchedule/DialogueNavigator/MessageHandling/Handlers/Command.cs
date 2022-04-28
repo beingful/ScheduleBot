@@ -3,7 +3,8 @@
     public class Command : ICommand
     {
         private readonly UIBehaviour _uiBehaviour;
-        private readonly StateBehaviour _stateBehaviour;
+        public readonly StateBehaviour _stateBehaviour;
+        private ICommand _currentState;
 
         public Command(UIBehaviour uiBehaviour, StateBehaviour stateBehaviour)
         {
@@ -23,13 +24,13 @@
             {
                 TryChangeCurrentCommand(info.LastMessage);
 
-                ui = _stateBehaviour.CurrentState.Execute(info);
+                ui = _currentState.Execute(info);
             }
 
             return ui;
         }
 
         private void TryChangeCurrentCommand(string message) 
-            => _stateBehaviour.TryChangeCurrentState(message);
+            => _currentState = _stateBehaviour.TryChangeCurrentState(message, _currentState);
     }
 }
