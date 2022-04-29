@@ -48,9 +48,7 @@ namespace PrimatScheduleBot
         {
             TimeSpan timeValue = time.Value;
 
-            var timeLine = $"{timeValue.Hours}:{timeValue.Minutes}";
-
-            return timeLine;
+            return $"{timeValue.Hours.ToString("D2")}:{timeValue.Minutes.ToString("D2")}";
         }
 
         private string GetProperty(object property) => property is null ? String.Empty : $"{property}\n";
