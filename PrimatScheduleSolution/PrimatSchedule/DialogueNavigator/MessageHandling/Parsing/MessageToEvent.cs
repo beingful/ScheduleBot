@@ -14,20 +14,17 @@ namespace PrimatScheduleBot
         {
             _parseMode = new EventParseMode(message, period);
             _display = new PropertiesDisplay(period);
-            _reflectionUsage = new EventReflectionUsage(_event, period);
         }
 
         public MessageToEvent(string message, IPeriodicity period, Event @event) : this(message, period)
-            => _event = @event;
-
-        public MessageToEvent(string chatId, string message, IPeriodicity period) : this(message, period)
         {
-            _event = new Event 
-            { 
-                Id = new Guid(), 
-                ChatId = chatId 
-            };
+            _event = @event;
+            _reflectionUsage = new EventReflectionUsage(@event, period);
         }
+
+        public MessageToEvent(string chatId, string message, IPeriodicity period) : 
+            this(message, period, new Event { Id = Guid.NewGuid(), ChatId = chatId })
+        { }
 
         public Event Convert()
         {

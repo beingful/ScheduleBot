@@ -12,7 +12,7 @@ namespace PrimatScheduleBot
 
         private IEnumerable<Event> GetAll() => _repository.GetAll();
 
-        private IEnumerable<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event));
+        private IList<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event)).ToList();
 
         public bool DoesAnyEventExist(Func<Event, bool> isCorrect) => GetAll().Any(@event => isCorrect(@event));
 

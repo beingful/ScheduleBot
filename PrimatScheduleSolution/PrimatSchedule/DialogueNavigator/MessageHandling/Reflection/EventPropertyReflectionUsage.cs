@@ -32,8 +32,7 @@ namespace PrimatScheduleBot
 
         private void SetDay()
         {
-            var day = GetDay();
-            object value = _period.GetProperty(day);
+            object value = _period.TryGetDate(_propertyValue);
 
             _instanceReflection.SetValue(_propertyName, value);
         }
@@ -45,11 +44,11 @@ namespace PrimatScheduleBot
             _instanceReflection.SetValue(nameof(Event.PeriodicityId), periodicity);
         }
 
-        private DateTime GetDay()
-        {
-            var converter = new Converter<string>(_propertyValue, typeof(DateTime));
+        //private DateTime GetDay()
+        //{
+        //    var converter = new Converter<string>(_propertyValue, typeof(DateTime));
 
-            return (DateTime)converter.TryGetValue();
-        }
+        //    return (DateTime)converter.TryGetValue();
+        //}
     }
 }

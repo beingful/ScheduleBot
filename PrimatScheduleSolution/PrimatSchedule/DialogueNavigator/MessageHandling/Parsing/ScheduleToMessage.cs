@@ -5,34 +5,48 @@ namespace PrimatScheduleBot
 {
     public class ScheduleToMessage
     {
-        private readonly List<Event> _schedule;
+        private readonly IEnumerable<Event> _schedule;
 
-        public ScheduleToMessage(IEnumerable<Event> schedule) => _schedule = schedule.ToList();
+        public ScheduleToMessage(IEnumerable<Event> schedule) => _schedule = schedule;
 
         public string Convert(bool toOrderedList = false)
         {
-            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count);
+            try
+            {
+                _schedule.Count();
+            }
+            catch
+            {
+                MessageValidator.ValidateIsScheduleEmpty(_schedule.Count());
+            }
+            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count());
 
             string result = string.Empty;
 
             if (toOrderedList)
             {
-                OrderedList(result);
+                result = OrderedList(result);
             }
             else
             {
-                UnorderedList(result);
+                result = UnorderedList(result);
             }
 
             return result;
         }
 
-        public void OrderedList(string result)
+        public string OrderedList(string result)
         {
-            for (int i = 0; i < _schedule.Count; i++)
+            int counter = 1;
+
+            foreach(var @event in _schedule)
             {
-                result += $"{i + 1}.\t{ParseEvent(_schedule[i])}";
+                result += $"{counter}.\t{ParseEvent(@event)}";
+
+                counter++;
             }
+
+            return result;
         }
 
         private string ParseEvent(Event @event)
@@ -42,12 +56,14 @@ namespace PrimatScheduleBot
             return $"{parser.Parse()}\n\n";
         }
 
-        public void UnorderedList(string result)
+        public string UnorderedList(string result)
         {
             foreach (var @event in _schedule)
             {
                 result += $"{ParseEvent(@event)}\n\n";
             }
+
+            return result;
         }
     }
 }

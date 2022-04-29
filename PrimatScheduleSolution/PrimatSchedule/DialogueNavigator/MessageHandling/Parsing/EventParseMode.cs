@@ -45,7 +45,7 @@ namespace PrimatScheduleBot
                 {
                     int separatorIndex = GetSeparatorIndex(value);
 
-                    return GetValue(value, separatorIndex + 1, value.Length - 1);
+                    return GetValue(value, separatorIndex + 1, value.Length - separatorIndex - 1);
                 });
         }
 

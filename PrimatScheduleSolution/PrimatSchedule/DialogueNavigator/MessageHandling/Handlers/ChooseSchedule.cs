@@ -25,7 +25,7 @@ namespace PrimatScheduleBot
 
         private List<Event> GetSchedule(string chatId, DateTime date)
         {
-            var facade = new EventFacade();
+            using var facade = new EventFacade();
 
             return facade.GetByDate(chatId, date).ToList();
         }

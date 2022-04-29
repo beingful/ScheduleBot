@@ -9,7 +9,7 @@ namespace PrimatScheduleBot
 
         public string Name { get; }
 
-        DateTime ICalendarDay.TryGetDate(string message)
+        public DateTime TryGetDate(string message)
         {
             MessageValidator.ValidateDate(message);
 

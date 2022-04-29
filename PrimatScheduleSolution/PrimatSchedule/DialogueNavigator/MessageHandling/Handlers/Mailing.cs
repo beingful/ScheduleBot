@@ -5,13 +5,8 @@ namespace PrimatScheduleBot
     public class Mailing : IStopable, IStartable
     {
         private readonly string _chatId;
-        private readonly MailingListFacade _facade;
 
-        public Mailing(string chatId) 
-        {
-            _chatId = chatId;
-            _facade = new MailingListFacade();
-        }
+        public Mailing(string chatId) => _chatId = chatId;
 
         public void StartMailingList(TimeSpan time, string token)
         {
@@ -32,14 +27,18 @@ namespace PrimatScheduleBot
         {
             StartMailingList(time, token);
 
-            _facade.InsertOrUpdate(_chatId, time);
+            using var facade = new MailingListFacade();
+
+            facade.InsertOrUpdate(_chatId, time);
         }
 
         public void Stop()
         {
             StopMailingList();
 
-            _facade.Remove(_chatId);
+            using var facade = new MailingListFacade();
+
+            facade.Remove(_chatId);
         }
     }
 }

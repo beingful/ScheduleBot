@@ -16,7 +16,7 @@ namespace PrimatScheduleBot
         {
             var list = new MailingList()
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 ChatId = chatId,
                 Time = time
             };

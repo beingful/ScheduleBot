@@ -24,9 +24,9 @@ namespace PrimatScheduleBot
 
         public bool IsSuchAKeyExist(string key) => DisplayValues.ContainsKey(key);
 
-        public string GetValue(string key) => DisplayValues[key];
+        public string GetValue(string value) => DisplayValues.First(pair => pair.Value == value).Key;
 
-        public bool AllRecognized(string[] keys) => keys.All(key => DisplayValues.ContainsKey(key));
+        public bool AllRecognized(string[] keys) => keys.All(key => DisplayValues.Values.Contains(key));
 
         public override string ToString()
         {
@@ -34,7 +34,7 @@ namespace PrimatScheduleBot
 
             foreach (var display in DisplayValues)
             {
-                result += $"\n{display.Key}:";
+                result += $"\n{display.Value}:";
             }
 
             return result;

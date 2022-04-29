@@ -25,7 +25,7 @@ namespace PrimatScheduleBot
             return DateTime.Today.NextDateByDay(day);
         }
 
-        DateTime ICalendarDay.TryGetDate(string message)
+        public DateTime TryGetDate(string message)
         {
             MessageValidator.ValidateDay(message);
 

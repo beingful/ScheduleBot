@@ -17,9 +17,9 @@ namespace PrimatScheduleBot
 
         public void StartExisted()
         {
-            using var mailingListFacade = new MailingListFacade();
+            using var facade = new MailingListFacade();
 
-            IEnumerable<MailingList> lists = mailingListFacade.GetAll();
+            IEnumerable<MailingList> lists = facade.GetAll();
 
             foreach (var list in lists)
             {

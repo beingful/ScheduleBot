@@ -15,32 +15,32 @@ namespace PrimatScheduleBot
         {
             await _context.AddAsync(@event);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
         public void Update(Event @event)
         {
             _context.Update(@event);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
         public void Remove(Event @event)
         {
             _context.Remove(@event);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
         public void RemoveRange(IEnumerable<Event> events)
         {
             _context.RemoveRange(events);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
-        private async void SaveChangesAsync() => await _context.SaveChangesAsync();
+        private void SaveChanges() => _context.SaveChanges();
 
-        public async void Dispose() => await _context.DisposeAsync();
+        public void Dispose() => _context.Dispose();
     }
 }

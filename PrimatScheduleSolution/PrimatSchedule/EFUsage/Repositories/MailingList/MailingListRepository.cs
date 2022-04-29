@@ -15,25 +15,25 @@ namespace PrimatScheduleBot
         {
             await _context.AddAsync(list);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
         public void Update(MailingList list)
         {
             _context.Update(list);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
         public void Remove(MailingList list)
         {
             _context.Remove(list);
 
-            SaveChangesAsync();
+            SaveChanges();
         }
 
-        private async void SaveChangesAsync() => await _context.SaveChangesAsync();
+        private void SaveChanges() => _context.SaveChanges();
 
-        public async void Dispose() => await _context.DisposeAsync();
+        public void Dispose() => _context.Dispose();
     }
 }

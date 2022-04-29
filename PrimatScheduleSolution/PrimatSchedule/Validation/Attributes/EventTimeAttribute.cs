@@ -12,7 +12,7 @@ namespace PrimatScheduleBot
             {
                 using var facade = new EventFacade();
 
-                _result = facade.DoesAnyEventExist(otherEvent => DoesIntersectionsExist(@event, otherEvent));
+                _result = !facade.DoesAnyEventExist(otherEvent => DoesIntersectionsExist(@event, otherEvent));
             }
 
             return _result;

@@ -11,20 +11,30 @@ namespace PrimatScheduleBot
     {
         private const string _key = "_data";
 
-        public async Task Execute(IJobExecutionContext context)
+        private UI GetUI(IEnumerable<Event> schedule)
         {
-            PostSenderData data = GetData(context);
-            IEnumerable<Event> schedule = GetSchedule(data.ChatId);
-            string message = ScheduleToMessage(schedule);
+            UI ui;
 
-            await SendSchedule(data, message);
+            try
+            {
+                string message = ScheduleToMessage(schedule);
+
+                ui = new UI(message, Stickers.Walking);
+            }
+            catch (MessageException exception)
+            {
+                ui = exception.UI;
+            }
+
+            return ui;
         }
 
         private string ScheduleToMessage(IEnumerable<Event> schedule)
         {
             var converter = new ScheduleToMessage(schedule);
+            string a = converter.Convert();
 
-            return converter.Convert();
+            return a;
         }
 
         private PostSenderData GetData(IJobExecutionContext context)
@@ -43,11 +53,21 @@ namespace PrimatScheduleBot
             return facade.GetByDate(chatId, date);
         }
 
-        private async Task SendSchedule(PostSenderData data, string message)
+        private async Task SendSchedule(PostSenderData data, UI ui)
         {
             var bot = new TelegramBotClient(data.Token);
 
-            await bot.SendTextMessageAsync(data.ChatId, message, ParseMode.Markdown, null, true);
+            await bot.SendStickerAsync(data.ChatId, ui.StickerId);
+            await bot.SendTextMessageAsync(data.ChatId, ui.Question, ParseMode.Markdown, null, true);
+        }
+
+        public async Task Execute(IJobExecutionContext context)
+        {
+            PostSenderData data = GetData(context);
+            IEnumerable<Event> schedule = GetSchedule(data.ChatId);
+            UI ui = GetUI(schedule);
+
+            await SendSchedule(data, ui);
         }
     }
 }
