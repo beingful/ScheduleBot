@@ -10,9 +10,9 @@ namespace PrimatScheduleBot
 
         public EventFacade() => _repository = new EventRepository();
 
-        private IEnumerable<Event> GetAll() => _repository.GetAll();
+        private List<Event> GetAll() => _repository.GetAll();
 
-        private IList<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event)).ToList();
+        private List<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event)).ToList();
 
         public bool DoesAnyEventExist(Func<Event, bool> isCorrect) => GetAll().Any(@event => isCorrect(@event));
 
@@ -22,7 +22,7 @@ namespace PrimatScheduleBot
 
         public void RemoveAllBeforeToday() 
         {
-            IEnumerable<Event> events = GetAllWhere(@event => @event.Date < DateTime.Today);
+            List<Event> events = GetAllWhere(@event => @event.Date < DateTime.Today);
 
             _repository.RemoveRange(events);
         }
@@ -34,7 +34,7 @@ namespace PrimatScheduleBot
             _repository.Remove(@event);
         }
 
-        public IEnumerable<Event> GetByDate(string chatId, DateTime date) 
+        public List<Event> GetByDate(string chatId, DateTime date) 
             => GetAllWhere(@event => @event.ChatId == chatId && @event.Date == date);
 
         public void Dispose() => _repository.Dispose();

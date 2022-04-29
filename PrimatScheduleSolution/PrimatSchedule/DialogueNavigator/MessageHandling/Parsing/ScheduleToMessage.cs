@@ -1,25 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace PrimatScheduleBot
 {
     public class ScheduleToMessage
     {
-        private readonly IEnumerable<Event> _schedule;
+        private readonly List<Event> _schedule;
 
-        public ScheduleToMessage(IEnumerable<Event> schedule) => _schedule = schedule;
+        public ScheduleToMessage(List<Event> schedule) => _schedule = schedule;
 
         public string Convert(bool toOrderedList = false)
         {
-            try
-            {
-                _schedule.Count();
-            }
-            catch
-            {
-                MessageValidator.ValidateIsScheduleEmpty(_schedule.Count());
-            }
-            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count());
+            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count);
 
             string result = string.Empty;
 
@@ -37,13 +28,9 @@ namespace PrimatScheduleBot
 
         public string OrderedList(string result)
         {
-            int counter = 1;
-
-            foreach(var @event in _schedule)
+            for (int i = 0; i < _schedule.Count; i++)
             {
-                result += $"{counter}.\t{ParseEvent(@event)}";
-
-                counter++;
+                result += $"{i + 1}.\t{ParseEvent(_schedule[i])}";
             }
 
             return result;
@@ -58,7 +45,7 @@ namespace PrimatScheduleBot
 
         public string UnorderedList(string result)
         {
-            foreach (var @event in _schedule)
+            foreach(var @event in _schedule)
             {
                 result += $"{ParseEvent(@event)}\n\n";
             }

@@ -31,7 +31,7 @@ namespace PrimatScheduleBot
             _repository.Update(list);
         }
 
-        public IEnumerable<MailingList> GetAll() => _repository.GetAll();
+        public List<MailingList> GetAll() => _repository.GetAll();
 
         public void InsertOrUpdate(string chatId, TimeSpan time)
         {

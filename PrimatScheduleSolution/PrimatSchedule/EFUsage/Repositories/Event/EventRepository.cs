@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PrimatScheduleBot
 {
@@ -9,7 +10,7 @@ namespace PrimatScheduleBot
 
         public EventRepository() => _context = new TimetableContext();
 
-        public IEnumerable<Event> GetAll() => _context.Events;
+        public List<Event> GetAll() => _context.Events.ToList();
 
         public async void Insert(Event @event)
         {
@@ -41,6 +42,6 @@ namespace PrimatScheduleBot
 
         private void SaveChanges() => _context.SaveChanges();
 
-        public void Dispose() => _context.Dispose();
+        public async void Dispose() => await _context.DisposeAsync();
     }
 }

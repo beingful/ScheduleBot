@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PrimatScheduleBot
+﻿namespace PrimatScheduleBot
 {
     public class EventPropertyReflectionUsage
     {
@@ -43,12 +41,5 @@ namespace PrimatScheduleBot
 
             _instanceReflection.SetValue(nameof(Event.PeriodicityId), periodicity);
         }
-
-        //private DateTime GetDay()
-        //{
-        //    var converter = new Converter<string>(_propertyValue, typeof(DateTime));
-
-        //    return (DateTime)converter.TryGetValue();
-        //}
     }
 }

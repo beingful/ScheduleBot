@@ -11,7 +11,7 @@ namespace PrimatScheduleBot
     {
         private const string _key = "_data";
 
-        private UI GetUI(IEnumerable<Event> schedule)
+        private UI GetUI(List<Event> schedule)
         {
             UI ui;
 
@@ -29,7 +29,7 @@ namespace PrimatScheduleBot
             return ui;
         }
 
-        private string ScheduleToMessage(IEnumerable<Event> schedule)
+        private string ScheduleToMessage(List<Event> schedule)
         {
             var converter = new ScheduleToMessage(schedule);
             string a = converter.Convert();
@@ -44,7 +44,7 @@ namespace PrimatScheduleBot
             return (PostSenderData)dataMap[_key];
         }
 
-        private IEnumerable<Event> GetSchedule(string chatId)
+        private List<Event> GetSchedule(string chatId)
         {
             using var facade = new EventFacade();
 
@@ -64,7 +64,7 @@ namespace PrimatScheduleBot
         public async Task Execute(IJobExecutionContext context)
         {
             PostSenderData data = GetData(context);
-            IEnumerable<Event> schedule = GetSchedule(data.ChatId);
+            List<Event> schedule = GetSchedule(data.ChatId);
             UI ui = GetUI(schedule);
 
             await SendSchedule(data, ui);

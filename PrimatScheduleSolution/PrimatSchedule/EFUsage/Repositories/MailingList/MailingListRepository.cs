@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PrimatScheduleBot
 {
@@ -9,7 +10,7 @@ namespace PrimatScheduleBot
 
         public MailingListRepository() => _context = new TimetableContext();
 
-        public IEnumerable<MailingList> GetAll() => _context.MailingLists;
+        public List<MailingList> GetAll() => _context.MailingLists.ToList();
 
         public async void Insert(MailingList list)
         {
@@ -34,6 +35,6 @@ namespace PrimatScheduleBot
 
         private void SaveChanges() => _context.SaveChanges();
 
-        public void Dispose() => _context.Dispose();
+        public async void Dispose() => await _context.DisposeAsync();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PrimatScheduleBot
@@ -9,7 +10,7 @@ namespace PrimatScheduleBot
 
         public PeriodicityFacade() => _repository = new PeriodicityRepository();
 
-        private Periodicity[] GetAllInArray() => _repository.GetAll().ToArray();
+        private List<Periodicity> GetAllInArray() => _repository.GetAll().ToList();
 
         public Guid GetDailyPeriodicityId() => GetAllInArray()[0].Id;
 

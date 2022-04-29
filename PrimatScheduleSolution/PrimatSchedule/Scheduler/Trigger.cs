@@ -19,8 +19,7 @@ namespace PrimatScheduleBot
             return TriggerBuilder
                 .Create()
                 .WithIdentity(_name)
-                .StartAt(DateTimeOffset.Now.AddSeconds(15))
-                //.WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(_time.Hours, _time.Minutes))
+                .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(_time.Hours, _time.Minutes))
                 .Build();
         }
     }
