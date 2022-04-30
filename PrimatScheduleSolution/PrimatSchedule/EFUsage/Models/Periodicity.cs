@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public partial class Periodicity
     {
         public Periodicity() => Events = new HashSet<Event>();

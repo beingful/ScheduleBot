@@ -8,8 +8,16 @@ namespace PrimatScheduleBot
 
         public EventToMessage(Event @event) => _event = @event;
 
-        private string GetBaseEventInformation() 
-            => GetProperty(_event.Initiator) + GetProperty(_event.Place) + GetTime() + GetProperty(_event.Description); 
+        private string GetBaseEventInformation()
+        {
+            var line = GetProperty(_event.Initiator);
+            line += GetProperty(_event.Place);
+            line += GetTime();
+            line += GetProperty(_event.Description);
+
+            return line;
+        }
+            //=> GetProperty(_event.Initiator) + GetProperty(_event.Place) + GetTime() + GetProperty(_event.Description); 
 
         private string GetName()
         {
@@ -51,7 +59,17 @@ namespace PrimatScheduleBot
             return $"{timeValue.Hours.ToString("D2")}:{timeValue.Minutes.ToString("D2")}";
         }
 
-        private string GetProperty(object property) => property is null ? String.Empty : $"{property}\n";
+        private string GetProperty(string property) 
+        {
+            string result = property;
+
+            if (!String.IsNullOrEmpty(property))
+            {
+                result += "\n";
+            }
+
+            return result;
+        }
 
         public string Parse() => GetName() + GetBaseEventInformation();
 

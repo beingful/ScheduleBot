@@ -24,7 +24,7 @@ namespace PrimatScheduleBot
 
             string message = "Так тримати! Погнали далі!\n" +
                 "Заповни і надійшли мені дані про подію в наступному форматі (графа "
-                + $"{ required } обов'язкова для заповнення):\n\n" +
+                + $"{ required } обов'язкова для заповнення):\n" +
                 $"`{ display }`";
 
             return new UI(message, Stickers.Freedom);
@@ -41,8 +41,6 @@ namespace PrimatScheduleBot
             else
             {
                 Event @event = GetNewEvent(info);
-
-                MessageValidator.ValidateTimeForDuplications(@event);
 
                 InsertEvent(@event);
 

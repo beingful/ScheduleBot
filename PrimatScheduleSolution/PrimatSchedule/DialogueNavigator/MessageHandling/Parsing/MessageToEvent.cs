@@ -34,7 +34,10 @@ namespace PrimatScheduleBot
             {
                 string propertyName = _display.GetValue(parsedProperty.Key);
 
-                _reflectionUsage.SetValue(propertyName, parsedProperty.Value);
+                if (!string.IsNullOrEmpty(parsedProperty.Value))
+                {
+                    _reflectionUsage.SetValue(propertyName, parsedProperty.Value);
+                }
             }
 
             MessageValidator.ValidateEvent(_event);

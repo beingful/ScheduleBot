@@ -2,6 +2,7 @@
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public partial class Event
     {
         public Guid Id { get; set; }

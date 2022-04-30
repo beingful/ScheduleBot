@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class ChooseEvent : ICommand
     {
         public readonly UIBehaviour _uiBehaviour;
@@ -28,7 +29,9 @@ namespace PrimatScheduleBot
                 buttons.Add((i + 1).ToString());
             }
 
-            return new UI(_schedule.ToString(), buttons);
+            var parser = new ScheduleToMessage(_schedule);
+
+            return new UI(parser.Convert(true), buttons);
         }
 
         public UI Execute(ChatInfo info)
@@ -57,7 +60,7 @@ namespace PrimatScheduleBot
             MessageValidator.ValidateMessage(_ui.ButtonCaptions.Contains(message));
 
             int index = Convert.ToInt32(message);
-            Event selectedEvent = _schedule[index];
+            Event selectedEvent = _schedule[index - 1];
 
             _currentCommand = GetCommand(message, selectedEvent);
         }

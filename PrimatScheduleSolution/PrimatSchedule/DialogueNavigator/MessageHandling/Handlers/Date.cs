@@ -13,7 +13,11 @@ namespace PrimatScheduleBot
         {
             MessageValidator.ValidateDate(message);
 
-            return DateTime.Parse(message);
+            var date = DateTime.Parse(message);
+
+            MessageValidator.ValidateIsDateCorrect(date);
+
+            return date;
         }
 
         string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {date}";

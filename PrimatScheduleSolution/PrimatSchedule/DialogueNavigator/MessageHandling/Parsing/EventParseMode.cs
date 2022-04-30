@@ -53,7 +53,7 @@ namespace PrimatScheduleBot
         {
             string value = line.Substring(from, to);
 
-            value.Trim('\t', '\r', ' ');
+            value = value.Trim('\t', '\r', ' ');
 
             return value;
         }

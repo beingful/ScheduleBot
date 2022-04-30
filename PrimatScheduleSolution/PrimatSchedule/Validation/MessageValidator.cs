@@ -32,13 +32,13 @@ namespace PrimatScheduleBot
         public static void ValidateIsScheduleEmpty(int eventsCount) => Validate(eventsCount > 0, new NoOneScheduleException());
 
         public static void ValidateIsEndBeforeStart(TimeSpan? startTime, TimeSpan? endTime) 
-            => Validate(endTime > startTime, new EndBeforeStartException());
+            => Validate(!(endTime <= startTime), new EndBeforeStartException());
 
         public static void ValidateIsEndWithoutStart(TimeSpan? startTime, TimeSpan? endTime)
-            => Validate(!(startTime is null && endTime is null), new EndWithoutStartException());
+            => Validate(!(startTime is null && endTime != null), new EndWithoutStartException());
 
-        public static void ValidateRequiredIsDefault(object instance, object defaultValue) 
-            => Validate(instance != defaultValue, new NullValueException());
+        public static void ValidateRequiredIsDefault<T>(T instance, T defaultValue) where T : IEquatable<T>
+            => Validate(!instance.IsEqual(defaultValue), new NullValueException());
 
         public static void ValidateIsDateCorrect(DateTime date) => Validate(date >= DateTime.Today, new TooEarlyDateException());
 

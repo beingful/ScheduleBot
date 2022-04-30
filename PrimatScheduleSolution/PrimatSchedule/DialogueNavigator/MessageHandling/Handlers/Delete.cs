@@ -2,6 +2,7 @@
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public sealed class Delete : ICommand
     {
         private readonly Guid _eventId;

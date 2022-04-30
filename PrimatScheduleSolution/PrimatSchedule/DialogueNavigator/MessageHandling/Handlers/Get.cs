@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public class Get : ICommand
     {
         private readonly List<Event> _schedule;
@@ -10,6 +12,8 @@ namespace PrimatScheduleBot
 
         public UI Execute(ChatInfo info)
         {
+            MessageValidator.ValidateMessage(info.LastMessage is Buttons.Get);
+            
             var parser = new ScheduleToMessage(_schedule);
 
             var scheduleInMessage = parser.Convert();

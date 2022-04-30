@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public sealed class Update : ICommand
     {
         private readonly Event _event;
@@ -22,7 +24,7 @@ namespace PrimatScheduleBot
         {
             var parser = new EventToMessage(@event);
 
-            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n" 
+            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n" 
                 + $"`{ parser.ParseAll(period) }`";
 
             return new UI(message);
@@ -39,8 +41,6 @@ namespace PrimatScheduleBot
             else
             {
                 Event @event = GetModifiedEvent(info.LastMessage);
-
-                MessageValidator.ValidateTimeForDuplications(@event);
 
                 UpdateEvent(@event);
 

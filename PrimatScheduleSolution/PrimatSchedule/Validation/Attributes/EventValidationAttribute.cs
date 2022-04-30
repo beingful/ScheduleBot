@@ -9,15 +9,17 @@ namespace PrimatScheduleBot
         {
             if (value is Event @event)
             {
-                MessageValidator.ValidateIsEndWithoutStart(@event.StartTime, @event.EndTime);
+                MessageValidator.ValidateRequiredIsDefault(@event.Name, null);
 
-                MessageValidator.ValidateIsEndWithoutStart(@event.StartTime, @event.EndTime);
-
-                MessageValidator.ValidateRequiredIsDefault(@event.Name, default(string));
-
-                MessageValidator.ValidateRequiredIsDefault(@event.Date, default(DateTime));
+                MessageValidator.ValidateRequiredIsDefault(@event.Date, DateTime.MinValue);
 
                 MessageValidator.ValidateIsDateCorrect(@event.Date);
+
+                MessageValidator.ValidateIsEndWithoutStart(@event.StartTime, @event.EndTime);
+
+                MessageValidator.ValidateIsEndBeforeStart(@event.StartTime, @event.EndTime);
+
+                MessageValidator.ValidateTimeForDuplications(@event);
             }
 
             return false;

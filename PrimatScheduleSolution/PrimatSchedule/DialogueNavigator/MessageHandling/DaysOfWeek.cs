@@ -10,7 +10,7 @@ namespace PrimatScheduleBot
 
         static DaysOfWeek() => _days = CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat.DayNames;
 
-        public static bool DoesSuchADayExist(string day) => _days.Any(dayOfWeek => dayOfWeek == day);
+        public static bool DoesSuchADayExist(string day) => _days.Any(dayOfWeek => dayOfWeek.ToLower() == day.ToLower());
 
         public static DayOfWeek GetDayOfWeekByUKR(string day)
         {

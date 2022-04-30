@@ -41,7 +41,7 @@ namespace PrimatScheduleBot
 
             DateTime date = calendarDay.TryGetDate(info.LastMessage);
 
-            _currentSate = new ChooseSchedule(info.ChatId, date, calendarDay as IPeriodicity);
+            _currentSate = new ChooseSchedule(date, calendarDay as IPeriodicity);
         }
     }
 }

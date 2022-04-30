@@ -10,8 +10,6 @@ namespace PrimatScheduleBot
 
         public string Convert(bool toOrderedList = false)
         {
-            MessageValidator.ValidateIsScheduleEmpty(_schedule.Count);
-
             string result = string.Empty;
 
             if (toOrderedList)
@@ -30,7 +28,7 @@ namespace PrimatScheduleBot
         {
             for (int i = 0; i < _schedule.Count; i++)
             {
-                result += $"{i + 1}.\t{ParseEvent(_schedule[i])}";
+                result += $"{i + 1}.\t{ParseEvent(_schedule[i])}\n";
             }
 
             return result;
@@ -40,14 +38,14 @@ namespace PrimatScheduleBot
         {
             var parser = new EventToMessage(@event);
 
-            return $"{parser.Parse()}\n\n";
+            return $"{parser.Parse()}";
         }
 
         public string UnorderedList(string result)
         {
             foreach(var @event in _schedule)
             {
-                result += $"{ParseEvent(@event)}\n\n";
+                result += $"{ParseEvent(@event)}\n";
             }
 
             return result;
