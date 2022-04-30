@@ -44,10 +44,7 @@ namespace PrimatScheduleBot
             }
             else
             {
-                if (_currentCommand is null)
-                {
-                    TryChangeCurrentCommand(info.LastMessage);
-                }
+                TryChangeCurrentCommand(info.LastMessage);
 
                 ui = _currentCommand.Execute(info);
             }
@@ -57,12 +54,35 @@ namespace PrimatScheduleBot
 
         private void TryChangeCurrentCommand(string message)
         {
-            MessageValidator.ValidateMessage(_ui.ButtonCaptions.Contains(message));
+            if (_ui.ButtonCaptions.Contains(message))
+            {
+                Event selectedEvent = GetEvent(message);
 
+                _currentCommand = GetCommand(message, selectedEvent);
+            }
+            else
+            {
+                MessageValidator.ValidateMessage(_currentCommand != null);
+            }
+        }
+
+        private Event GetEvent(string message)
+        {
             int index = Convert.ToInt32(message);
-            Event selectedEvent = _schedule[index - 1];
+            Guid selectedEventId = _schedule[index - 1].Id;
 
-            _currentCommand = GetCommand(message, selectedEvent);
+            using var facade = new EventFacade();
+
+            CheckDoesEventExist(selectedEventId, facade);
+
+            return facade.GetById(selectedEventId);
+        }
+
+        private void CheckDoesEventExist(Guid selectedEventId, EventFacade facade)
+        {
+            bool doesEventExist = facade.DoesAnyEventExist(@event => @event.Id == selectedEventId);
+
+            MessageValidator.ValidateDoesEventExist(doesEventExist);
         }
 
         private ICommand GetCommand(string message, Event @event)

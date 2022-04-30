@@ -14,6 +14,8 @@ namespace PrimatScheduleBot
 
         private List<Event> GetAllWhere(Func<Event, bool> isCorrect) => GetAll().Where(@event => isCorrect(@event)).ToList();
 
+        public Event GetById(Guid id) => _repository.GetAll().First(@event => @event.Id == id);
+
         public bool DoesAnyEventExist(Func<Event, bool> isCorrect) => GetAll().Any(@event => isCorrect(@event));
 
         public void Insert(Event @event) => _repository.Insert(@event);

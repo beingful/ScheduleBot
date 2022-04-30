@@ -8,16 +8,8 @@ namespace PrimatScheduleBot
 
         public EventToMessage(Event @event) => _event = @event;
 
-        private string GetBaseEventInformation()
-        {
-            var line = GetProperty(_event.Initiator);
-            line += GetProperty(_event.Place);
-            line += GetTime();
-            line += GetProperty(_event.Description);
-
-            return line;
-        }
-            //=> GetProperty(_event.Initiator) + GetProperty(_event.Place) + GetTime() + GetProperty(_event.Description); 
+        private string GetBaseEventInformation() 
+            => GetProperty(_event.Initiator) + GetProperty(_event.Place) + GetTime() + GetProperty(_event.Description); 
 
         private string GetName()
         {

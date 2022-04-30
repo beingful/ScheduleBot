@@ -56,5 +56,7 @@ namespace PrimatScheduleBot
 
         public static void ValidateTimeForDuplications(Event @event) 
             => Validate(@event, new EventTimeAttribute(), new EventDateTimeDuplicationException());
+
+        public static void ValidateDoesEventExist(bool isCorrect) => Validate(isCorrect, new EventIsDeletedException());
     }
 }
