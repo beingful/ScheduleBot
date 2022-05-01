@@ -46,5 +46,7 @@ namespace PrimatScheduleBot
         }
 
         public void SetValue(object value) => _property.SetValue(_instance, value);
+
+        public object GetValue() => _property.GetValue(_instance);
     }
 }

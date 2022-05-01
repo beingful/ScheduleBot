@@ -3,34 +3,32 @@
     public class EventPropertyReflectionUsage
     {
         private readonly string _propertyName;
-        private readonly string _propertyValue;
         private readonly IPeriodicity _period;
         private readonly InstanceReflection<Event> _instanceReflection;
 
-        public EventPropertyReflectionUsage(string propertyName, string propertyValue, Event @event, IPeriodicity period)
+        public EventPropertyReflectionUsage(string propertyName, Event @event, IPeriodicity period)
         {
             _propertyName = propertyName;
-            _propertyValue = propertyValue;
             _period = period;
             _instanceReflection = new InstanceReflection<Event>(@event);
         }
 
-        public void SetValue()
+        public void SetValue(string value)
         {
             if (_propertyName is nameof(Event.Date))
             {
-                SetDay();
+                SetDay(value);
                 SetPeriodicity();
             }
             else
             {
-                _instanceReflection.ConvertAndSetValue(_propertyName, _propertyValue);
+                _instanceReflection.ConvertAndSetValue(_propertyName, value);
             }
         }
 
-        private void SetDay()
+        private void SetDay(string value)
         {
-            object value = _period.TryGetDate(_propertyValue);
+            object date = _period.TryGetDate(value);
 
             _instanceReflection.SetValue(_propertyName, value);
         }
@@ -41,5 +39,7 @@
 
             _instanceReflection.SetValue(nameof(Event.PeriodicityId), periodicity);
         }
+
+        public object GetValue(string propertyName) => _instanceReflection.GetValue(propertyName);
     }
 }

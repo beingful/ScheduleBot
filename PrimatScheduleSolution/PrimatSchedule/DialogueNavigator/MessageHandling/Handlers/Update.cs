@@ -24,7 +24,7 @@ namespace PrimatScheduleBot
         {
             var parser = new EventToMessage(@event);
 
-            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n" 
+            string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n" 
                 + $"`{ parser.ParseAll(period) }`";
 
             return new UI(message);

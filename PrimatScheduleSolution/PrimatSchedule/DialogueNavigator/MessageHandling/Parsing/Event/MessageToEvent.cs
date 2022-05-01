@@ -32,7 +32,7 @@ namespace PrimatScheduleBot
 
             foreach (var parsedProperty in parsedProperties)
             {
-                string propertyName = _display.GetValue(parsedProperty.Key);
+                string propertyName = _display.GetKey(parsedProperty.Key);
 
                 if (!string.IsNullOrEmpty(parsedProperty.Value))
                 {

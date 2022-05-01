@@ -24,7 +24,9 @@ namespace PrimatScheduleBot
 
         public bool IsSuchAKeyExist(string key) => DisplayValues.ContainsKey(key);
 
-        public string GetValue(string value) => DisplayValues.First(pair => pair.Value == value).Key;
+        public string GetKey(string value) => DisplayValues.First(pair => pair.Value == value).Key;
+
+        public string GetValue(string key) => DisplayValues[key];
 
         public bool AllRecognized(string[] keys) => keys.All(key => DisplayValues.Values.Contains(key));
 

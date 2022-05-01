@@ -21,5 +21,12 @@
 
             propertyReflection.ConvertAndSetValue(value);
         }
+
+        public object GetValue(string propertyName)
+        {
+            PropertyReflection<T> propertyReflection = GetPropertyReflection(propertyName);
+
+            return propertyReflection.GetValue();
+        } 
     }
 }
