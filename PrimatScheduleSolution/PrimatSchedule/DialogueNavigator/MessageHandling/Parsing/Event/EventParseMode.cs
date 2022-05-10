@@ -3,16 +3,16 @@ using System.Linq;
 
 namespace PrimatScheduleBot
 {
-    public class EventParseMode
+    public class EventParseMode<T> where T : IPeriodicity, new()
     {
         private const char _separator = ':';
         private readonly string _message;
-        private readonly PropertiesDisplay _display;
+        private readonly PropertiesDisplay<T> _display;
 
-        public EventParseMode(string message, IPeriodicity period) 
+        public EventParseMode(string message, PropertiesDisplay<T> display) 
         {
             _message = message;
-            _display = new PropertiesDisplay(period);
+            _display = display;
         }
 
         public Dictionary<string, string> Parse()
@@ -30,7 +30,7 @@ namespace PrimatScheduleBot
         {
             string[] keys = parsedPropertiesKeys.ToArray();
 
-            MessageValidator.ValidateMessage(_display.AllRecognized(keys));
+            Validation.CorrectMessage(_display.AllRecognized(keys));
         }
 
         public Dictionary<string, string> GetParsedProperties(string[] linesForParsing)
@@ -62,7 +62,7 @@ namespace PrimatScheduleBot
         {
             int separatorIndex = line.IndexOf(_separator);
 
-            MessageValidator.ValidateMessage(separatorIndex != -1);
+            Validation.NotEqual(separatorIndex, -1);
 
             return separatorIndex;
         }

@@ -2,6 +2,6 @@
 {
     public class IncorrectMessageException : MessageException
     {
-        public IncorrectMessageException() : base(new UI("")) { }
+        public IncorrectMessageException() : base(new UI("...")) { }
     }
 }

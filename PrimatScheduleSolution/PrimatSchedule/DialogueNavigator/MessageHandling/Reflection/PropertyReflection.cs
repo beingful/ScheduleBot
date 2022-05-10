@@ -3,15 +3,16 @@ using System.Reflection;
 
 namespace PrimatScheduleBot
 {
-    public class PropertyReflection<T> where T : class, new()
+    public class PropertyReflection<T> where T : class
     {
         private readonly T _instance;
         private readonly PropertyInfo _property;
 
-        private PropertyReflection(T instance) => _instance = instance;
-
-        public PropertyReflection(T instance, string propertyName) : this(instance) 
-            => _property = GetProperty(propertyName);
+        public PropertyReflection(T instance, string propertyName) 
+        {
+            _instance = instance;
+            _property = GetProperty(propertyName);
+        }
 
         private PropertyInfo GetProperty(string propertyName)
         {
@@ -22,25 +23,33 @@ namespace PrimatScheduleBot
 
         private object ConvertValue(string from)
         {
-            Type exactType = GetExactType();
+            Type type = GetExactType();
+            object value = GetTypeDefaultValue();
 
-            var converter = new Converter<string>(from, exactType);
+            var converter = new Converter<string>(from, type, value);
 
             return converter.TryGetValue();
         }
 
         private Type GetExactType()
         {
-            Type type = _property.PropertyType;
+            TypeDetermination type = GetTypeDetermination();
 
-            Type underlyingType = Nullable.GetUnderlyingType(type);
-
-            return underlyingType ?? type;
+            return type.GetExactType();
         }
 
-        public void ConvertAndSetValue(object value)
+        private object GetTypeDefaultValue()
         {
-            object convertedValue = ConvertValue(value as string);
+            TypeDetermination type = GetTypeDetermination();
+
+            return type.GetTypeDefaultValue();
+        }
+
+        private TypeDetermination GetTypeDetermination() => new TypeDetermination(_property.PropertyType);
+
+        public void ConvertAndSetValue(string value)
+        {
+            object convertedValue = ConvertValue(value);
 
             SetValue(convertedValue);
         }

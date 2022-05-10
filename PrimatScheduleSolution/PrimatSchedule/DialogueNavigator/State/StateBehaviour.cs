@@ -23,7 +23,7 @@ namespace PrimatScheduleBot
             }
             else
             {
-                MessageValidator.ValidateMessage(CurrentState != null);
+                Validation.NotNull(CurrentState);
             }
         }
     }

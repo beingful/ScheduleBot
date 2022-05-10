@@ -6,7 +6,7 @@ namespace PrimatScheduleBot
     {
         public string Name { get; }
         public string GetProperty(DateTime date);
-        public DateTime TryGetDate(string message);
+        public DateTime CalculateDate(string message);
         public Guid GetPeriodicity();
     }
 }

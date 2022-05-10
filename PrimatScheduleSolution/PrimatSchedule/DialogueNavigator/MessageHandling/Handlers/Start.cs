@@ -35,7 +35,7 @@ namespace PrimatScheduleBot
 
         private void TryStart(ChatInfo info)
         {
-            MessageValidator.ValidateMessage(_mailingList is null);
+            Validation.NullValue(_mailingList);
 
             TimeSpan time = TryGetTime(info.LastMessage);
 
@@ -45,7 +45,7 @@ namespace PrimatScheduleBot
 
         private TimeSpan TryGetTime(string message)
         {
-            MessageValidator.ValidateTime(message);
+            Validation.TimeIsValid(message);
 
             return TimeSpan.Parse(message);
         }

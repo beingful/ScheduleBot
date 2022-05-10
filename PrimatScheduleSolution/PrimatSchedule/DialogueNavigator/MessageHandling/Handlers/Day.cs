@@ -3,7 +3,7 @@
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public class Day : ICalendarDay, IPeriodicity
+    public class Day : IPeriodicity
     {
         public Day() => Name = Buttons.Day;
 
@@ -25,9 +25,9 @@ namespace PrimatScheduleBot
             return DateTime.Today.NextDateByDay(day);
         }
 
-        public DateTime TryGetDate(string message)
+        DateTime IPeriodicity.CalculateDate(string message)
         {
-            MessageValidator.ValidateDay(message);
+            Validation.ValidateDay(message);
 
             return GetDateByDay(message);
         }

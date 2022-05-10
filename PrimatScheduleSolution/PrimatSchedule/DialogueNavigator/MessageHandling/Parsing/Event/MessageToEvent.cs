@@ -3,27 +3,27 @@ using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
-    public class MessageToEvent
+    public class MessageToEvent<T> where T : IPeriodicity, new()
     {
         private readonly Event _event;
-        private readonly EventParseMode _parseMode;
-        private readonly PropertiesDisplay _display;
-        private readonly EventReflectionUsage _reflectionUsage;
+        private readonly EventParseMode<T> _parseMode;
+        private readonly PropertiesDisplay<T> _display;
+        private readonly EventReflectionUsage<T> _reflectionUsage;
 
-        private MessageToEvent(string message, IPeriodicity period)
+        private MessageToEvent(string message)
         {
-            _parseMode = new EventParseMode(message, period);
-            _display = new PropertiesDisplay(period);
+            _display = new PropertiesDisplay<T>();
+            _parseMode = new EventParseMode<T>(message, _display);
         }
 
-        public MessageToEvent(string message, IPeriodicity period, Event @event) : this(message, period)
+        public MessageToEvent(string message, Event @event) : this(message)
         {
             _event = @event;
-            _reflectionUsage = new EventReflectionUsage(@event, period);
+            _reflectionUsage = new EventReflectionUsage<T>(@event);
         }
 
-        public MessageToEvent(string chatId, string message, IPeriodicity period) : 
-            this(message, period, new Event { Id = Guid.NewGuid(), ChatId = chatId })
+        public MessageToEvent(string chatId, string message) : 
+            this(message, new Event { Id = Guid.NewGuid(), ChatId = chatId })
         { }
 
         public Event Convert()
@@ -34,13 +34,10 @@ namespace PrimatScheduleBot
             {
                 string propertyName = _display.GetKey(parsedProperty.Key);
 
-                if (!string.IsNullOrEmpty(parsedProperty.Value))
-                {
-                    _reflectionUsage.SetValue(propertyName, parsedProperty.Value);
-                }
+                _reflectionUsage.SetValue(propertyName, parsedProperty.Value);
             }
 
-            MessageValidator.ValidateEvent(_event);
+            Validation.ValidateEvent(_event);
 
             return _event;
         }

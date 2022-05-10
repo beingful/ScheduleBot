@@ -13,7 +13,7 @@ namespace PrimatScheduleBot
             {
                 { typeof(String), String.Empty },
                 { typeof(TimeSpan), TimeSpan.Zero },
-                { typeof(DateTime), DateTime.Today }
+                { typeof(DateTime), DateTime.MinValue }
             };
         }
 

@@ -28,7 +28,7 @@ namespace PrimatScheduleBot
         {
             bool doesKeyExist = _uiBehaviour.IsSuchAKeyExist(message);
 
-            MessageValidator.ValidateMessage(doesKeyExist);
+            Validation.CorrectMessage(doesKeyExist);
         }
     }
 }

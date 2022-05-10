@@ -65,20 +65,18 @@ namespace PrimatScheduleBot
 
         public string Parse() => GetName() + GetBaseEventInformation();
 
-        public string ParseAll(IPeriodicity period)
+        public string ParseAll<T>() where T : IPeriodicity, new ()
         {
             var result = String.Empty;
-            var properties = new PropertiesDisplay(period);
-            var reflection = new EventReflectionUsage(_event, period);
+
+            var properties = new PropertiesDisplay<T>();
+            var reflection = new EventReflectionUsage<T>(_event);
 
             foreach (var props in properties.DisplayValues)
             {
                 object value = reflection.GetValue(props.Key);
 
-                if (value != null)
-                {
-                    result += GetFullProperty(props.Value, value);
-                }
+                result += GetFullProperty(props.Value, value);
             }
 
             return result;

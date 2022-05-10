@@ -3,12 +3,14 @@ using System.Linq;
 
 namespace PrimatScheduleBot
 {
-    public class PropertiesDisplay
+    public class PropertiesDisplay<T> where T : IPeriodicity, new()
     {
         public readonly Dictionary<string, string> DisplayValues;
 
-        public PropertiesDisplay(IPeriodicity period)
+        public PropertiesDisplay()
         {
+            var period = new T();
+
             DisplayValues = new Dictionary<string, string>
             {
                 { nameof(Event.Name), "Назва" },

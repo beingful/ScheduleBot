@@ -1,29 +1,24 @@
 ﻿namespace PrimatScheduleBot
 {
-    public class EventReflectionUsage
+    public class EventReflectionUsage<T> where T : IPeriodicity, new()
     {
         private readonly Event _event;
-        private readonly IPeriodicity _period;
 
-        public EventReflectionUsage(Event @event, IPeriodicity period)
-        {
-            _event = @event;
-            _period = period;
-        }
+        public EventReflectionUsage(Event @event) => _event = @event;
 
-        private EventPropertyReflectionUsage GetPropertyReflectionUsage(string propertyName)
-            => new EventPropertyReflectionUsage(propertyName, _event, _period);
+        private EventPropertyReflectionUsage<T> GetPropertyReflectionUsage(string propertyName) 
+            => new EventPropertyReflectionUsage<T>(propertyName, _event);
 
         public void SetValue(string propertyName, string propertyValue)
         {
-            EventPropertyReflectionUsage propertyReflectionUsage = GetPropertyReflectionUsage(propertyName);
+            EventPropertyReflectionUsage<T> propertyReflectionUsage = GetPropertyReflectionUsage(propertyName);
 
             propertyReflectionUsage.SetValue(propertyValue);
         }
 
         public object GetValue(string propertyName)
         {
-            EventPropertyReflectionUsage propertyReflectionUsage = GetPropertyReflectionUsage(propertyName);
+            EventPropertyReflectionUsage<T> propertyReflectionUsage = GetPropertyReflectionUsage(propertyName);
 
             return propertyReflectionUsage.GetValue(propertyName);
         }

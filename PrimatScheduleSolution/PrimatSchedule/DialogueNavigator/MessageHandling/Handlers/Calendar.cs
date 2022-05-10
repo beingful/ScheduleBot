@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public class Calendar<T> : ICommand where T : ICalendarDay, new()
+    public class Calendar<T> : ICommand where T : IPeriodicity, new()
     {
         private readonly UIBehaviour _uiBehaviour;
         private ICommand _currentSate;
@@ -39,9 +40,17 @@ namespace PrimatScheduleBot
         {
             var calendarDay = new T();
 
-            DateTime date = calendarDay.TryGetDate(info.LastMessage);
+            DateTime date = calendarDay.CalculateDate(info.LastMessage);
 
-            _currentSate = new ChooseSchedule(date, calendarDay as IPeriodicity);
+            _currentSate = new Command(new UIBehaviour(new Dictionary<string, UI>
+            {
+                { info.LastMessage, new UI("Що робимо далі?", 
+                new List<string> { Buttons.Get, Buttons.Event }) }
+            }), new StateBehaviour(new Dictionary<string, ICommand>
+            {
+                { Buttons.Get, new Get(date) },
+                { Buttons.Event, new ChooseEvent<T>(info.ChatId, date) }
+            }));
         }
     }
 }

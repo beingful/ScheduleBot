@@ -4,28 +4,26 @@ using System.Collections.Generic;
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public sealed class Update : ICommand
+    public sealed class Update<T> : ICommand where T : IPeriodicity, new()
     {
         private readonly Event _event;
         private readonly UIBehaviour _uiBehaviour;
-        private readonly IPeriodicity _period;
 
-        public Update(Event @event, IPeriodicity period)
+        public Update(Event @event)
         {
             _event = @event;
-            _period = period;
             _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> 
             { 
-                { Buttons.Update, GetUI(@event, period) } 
+                { Buttons.Update, GetUI(@event) } 
             });
         }
 
-        private UI GetUI(Event @event, IPeriodicity period)
+        private UI GetUI(Event @event)
         {
             var parser = new EventToMessage(@event);
 
             string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n" 
-                + $"`{ parser.ParseAll(period) }`";
+                + $"`{ parser.ParseAll<T>() }`";
 
             return new UI(message);
         }
@@ -52,7 +50,7 @@ namespace PrimatScheduleBot
 
         private Event GetModifiedEvent(string message)
         {
-            var converter = new MessageToEvent(message, _period, _event);
+            var converter = new MessageToEvent<T>(message, _event);
 
             return converter.Convert();
         }

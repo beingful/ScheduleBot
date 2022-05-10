@@ -6,19 +6,35 @@ namespace PrimatScheduleBot
     [Serializable]
     public class Get : ICommand
     {
-        private readonly List<Event> _schedule;
+        private readonly DateTime _date;
 
-        public Get(List<Event> schedule) => _schedule = schedule;
+        public Get(DateTime date) => _date = date;
 
         public UI Execute(ChatInfo info)
         {
-            MessageValidator.ValidateMessage(info.LastMessage is Buttons.Get);
-            
-            var parser = new ScheduleToMessage(_schedule);
+            CheckCommandIsRight(info.LastMessage);
 
-            var scheduleInMessage = parser.Convert();
+            List<Event> schedule = GetEvent(info.ChatId);
 
-            return new UI(scheduleInMessage, Stickers.Walking);
+            var message = GetMessage(schedule);
+
+            return new UI(message, Stickers.Walking);
+        }
+
+        private string GetMessage(List<Event> schedule)
+        {
+            var parser = new ScheduleToMessage(schedule);
+
+            return parser.Convert();
+        }
+
+        private void CheckCommandIsRight(string message) => Validation.Equal(message, Buttons.Get);
+
+        private List<Event> GetEvent(string chatId)
+        {
+            var schedule = new Schedule(chatId, _date);
+
+            return schedule.Get();
         }
     }
 }

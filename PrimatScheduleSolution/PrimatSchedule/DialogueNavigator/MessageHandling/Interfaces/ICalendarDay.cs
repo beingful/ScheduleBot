@@ -4,6 +4,6 @@ namespace PrimatScheduleBot
 {
     public interface ICalendarDay
     {
-        public DateTime TryGetDate(string message);
+        public DateTime CalculateDate(string message);
     }
 }

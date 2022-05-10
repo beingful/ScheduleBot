@@ -3,19 +3,19 @@
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public class Date : ICalendarDay, IPeriodicity
+    public class Date : IPeriodicity
     {
         public Date() => Name = Buttons.Date;
 
         public string Name { get; }
 
-        public DateTime TryGetDate(string message)
+        DateTime IPeriodicity.CalculateDate(string message)
         {
-            MessageValidator.ValidateDate(message);
+            Validation.DateIsValid(message);
 
             var date = DateTime.Parse(message);
 
-            MessageValidator.ValidateIsDateCorrect(date);
+            Validation.DateIsCorrect(date);
 
             return date;
         }

@@ -57,7 +57,7 @@ namespace PrimatScheduleBot
 
         public void TryStop()
         {
-            MessageValidator.ValidateQuartzStop(IsSuchAJobExist().Result);
+            Validation.ValidateQuartzStop(IsSuchAJobExist().Result);
 
             Stop();
         }

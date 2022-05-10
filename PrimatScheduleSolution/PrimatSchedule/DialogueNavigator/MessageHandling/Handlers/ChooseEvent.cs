@@ -1,52 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public class ChooseEvent : ICommand
+    public class ChooseEvent<T> : ICommand where T : IPeriodicity, new()
     {
-        public readonly UIBehaviour _uiBehaviour;
-        private readonly List<Event> _schedule;
-        private readonly IPeriodicity _period;
-        private ICommand _currentCommand;
-        private UI _ui;
+        private readonly DateTime _date;
+        private ChooseEventUI _ui;
+        private List<Event> _schedule;
+        private ICommand _currentState;
 
-        public ChooseEvent(List<Event> schedule, IPeriodicity period)
+        public ChooseEvent(string chatId, DateTime date) 
         {
-            _schedule = schedule;
-            _period = period;
-            _ui = GetUI();
-            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> { { Buttons.Event, _ui } });
+            _date = date;
+            SetProperties(chatId);
         }
 
-        private UI GetUI()
+        private void SetProperties(string chatId)
         {
-            var buttons = new List<string>();
-
-            for (int i = 0; i < _schedule.Count; i++)
-            {
-                buttons.Add((i + 1).ToString());
-            }
-
-            var parser = new ScheduleToMessage(_schedule);
-
-            return new UI(parser.Convert(true), buttons);
+            SetSchedule(chatId);
+            SetUI();
         }
+
+        private void SetSchedule(string chatId)
+        {
+            var schedule = new Schedule(chatId, _date);
+
+            _schedule = schedule.Get();
+        }
+
+        private void SetUI() => _ui = new ChooseEventUI(_schedule);
 
         public UI Execute(ChatInfo info)
         {
             UI ui;
 
-            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
+            if (_ui.DoesUIExist(info.LastMessage))
             {
-                ui = _uiBehaviour.GetUI(info.LastMessage);
+                SetProperties(info.ChatId);
+
+                ui = _ui.GetUI(info.LastMessage);
             }
             else
             {
                 TryChangeCurrentCommand(info.LastMessage);
 
-                ui = _currentCommand.Execute(info);
+                ui = _currentState.Execute(info);
             }
 
             return ui;
@@ -54,21 +55,25 @@ namespace PrimatScheduleBot
 
         private void TryChangeCurrentCommand(string message)
         {
-            if (_ui.ButtonCaptions.Contains(message))
-            {
-                Event selectedEvent = GetEvent(message);
+            int index;
 
-                _currentCommand = GetCommand(message, selectedEvent);
+            if (IsCorrectNumber(message, out index))
+            {
+                Event selectedEvent = GetEvent(index);
+
+                _currentState = GetCommand(message, selectedEvent);
             }
             else
             {
-                MessageValidator.ValidateMessage(_currentCommand != null);
+                Validation.NotNull(_currentState);
             }
         }
 
-        private Event GetEvent(string message)
+        private bool IsCorrectNumber(string message, out int index)
+            => Int32.TryParse(message, NumberStyles.Integer, null, out index) && index <= _schedule.Count;
+
+        private Event GetEvent(int index)
         {
-            int index = Convert.ToInt32(message);
             Guid selectedEventId = _schedule[index - 1].Id;
 
             using var facade = new EventFacade();
@@ -82,7 +87,7 @@ namespace PrimatScheduleBot
         {
             bool doesEventExist = facade.DoesAnyEventExist(@event => @event.Id == selectedEventId);
 
-            MessageValidator.ValidateDoesEventExist(doesEventExist);
+            Validation.ValidateDoesEventExist(doesEventExist);
         }
 
         private ICommand GetCommand(string message, Event @event)
@@ -93,7 +98,7 @@ namespace PrimatScheduleBot
                 new List<string> { Buttons.Delete, Buttons.Update }) }
             }), new StateBehaviour(new Dictionary<string, ICommand>
             {
-                { Buttons.Update, new Update(@event, _period) },
+                { Buttons.Update, new Update<T>(@event) },
                 { Buttons.Delete, new Delete(@event.Id) }
             }));
         }

@@ -4,23 +4,23 @@ using System.Collections.Generic;
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public sealed class Insert : ICommand
+    public sealed class Insert<T> : ICommand where T : IPeriodicity, new()
     {
         private readonly UIBehaviour _uiBehaviour;
-        private readonly IPeriodicity _period;
 
-        public Insert(string button, IPeriodicity period)
+        public Insert()
         {
-            _period = period;
+            var period = new T();
+
             _uiBehaviour = new UIBehaviour(new Dictionary<string, UI>
             {
-                { button, GetUI(period.Name) }
+                { period.Name, GetUI(period.Name) }
             });
         }
 
         private UI GetUI(string required)
         {
-            var display = new PropertiesDisplay(_period);
+            var display = new PropertiesDisplay<T>();
 
             string message = "Так тримати! Погнали далі!\n" +
                 "Заповни і надійшли мені дані про подію в наступному форматі (графа "
@@ -52,7 +52,7 @@ namespace PrimatScheduleBot
 
         private Event GetNewEvent(ChatInfo info)
         {
-            var converter = new MessageToEvent(info.ChatId, info.LastMessage, _period);
+            var converter = new MessageToEvent<T>(info.ChatId, info.LastMessage);
 
             return converter.Convert();
         }

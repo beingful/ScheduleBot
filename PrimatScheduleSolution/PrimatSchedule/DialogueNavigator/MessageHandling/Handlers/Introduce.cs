@@ -27,7 +27,7 @@ namespace PrimatScheduleBot
         {
             UI ui = _ui.GetUI(info.LastMessage);
 
-            MessageValidator.ValidateMessage(ui != null);
+            Validation.NotNull(ui);
 
             return ui;
         }

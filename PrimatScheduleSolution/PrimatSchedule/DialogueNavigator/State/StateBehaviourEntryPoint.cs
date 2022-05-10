@@ -32,8 +32,8 @@ namespace PrimatScheduleBot
                                     new List<string> { Buttons.Date, Buttons.Day }) },
                             }), new StateBehaviour(new Dictionary<string, ICommand>
                             {
-                                { Buttons.Date, new Insert(Buttons.Date, new Date()) },
-                                { Buttons.Day, new Insert(Buttons.Day, new Day()) }
+                                { Buttons.Date, new Insert<Date>() },
+                                { Buttons.Day, new Insert<Day>() }
                             }))
                         },
                         { Buttons.Edit, new Command(new UIBehaviour(new Dictionary<string, UI>
