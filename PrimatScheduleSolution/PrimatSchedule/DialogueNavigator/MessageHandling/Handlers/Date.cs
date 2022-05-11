@@ -1,72 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace PrimatScheduleBot
 {
-    sealed class Date : Command, IValidatableObject
+    [Serializable]
+    public class Date : IPeriodicity
     {
-        private readonly string _date;
-        private static int _year;
+        public Date() => Name = Buttons.Date;
 
-        static Date() => _year = DateTime.Now.Year;
+        public string Name { get; }
 
-        public Date(string date) : base(new Dictionary<MessageResult, string>
-            {
-                { MessageResult.DENIED, $"Невірні вхідні дані. Скористуйтеся довідкою {PrimatScheduleBot.Messages.Help}." }
-            })
+        DateTime IPeriodicity.CalculateDate(string message)
         {
-            _date = date.Insert(0, $"{_year}-");
+            Validation.DateIsValid(message);
+
+            var date = DateTime.Parse(message);
+
+            Validation.DateIsCorrect(date);
+
+            return date;
         }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {date}";
+
+        Guid IPeriodicity.GetPeriodicity()
         {
-            var errors = new List<ValidationResult>();
+            using var facade = new PeriodicityFacade();
 
-            if (!IsDateInRightFormat() || !IsSuchADateExist())
-            {
-                errors.Add(new ValidationResult(Messages.GetValueOrDefault(MessageResult.DENIED)));
-            }
-
-            return errors;
-        }
-
-        private bool IsSelfValidateSuccessful()
-        {
-            var context = new ValidationContext(this);
-
-            return Validator.TryValidateObject(this, context, new List<ValidationResult>(), true);
-        }
-
-        private bool IsDateInRightFormat()
-        {
-            Regex dateFormat = new Regex($"^{DateTime.Now.Year}[-]([0][1-5])[-]([0]?[1-9]|[12][0-9]|[3][01])$");
-
-            return dateFormat.IsMatch(_date);
-        }
-
-        private bool IsSuchADateExist()
-        {
-            try
-            {
-                DateTime.Parse(_date);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public override string HandleAndSendAnswer()
-        {
-            if (IsSelfValidateSuccessful())
-            {
-                return Querier.GetSchedule(_date).ToString();
-            }
-
-            return Messages.GetValueOrDefault(MessageResult.DENIED);
+            return facade.GetDailyPeriodicityId();
         }
     }
 }

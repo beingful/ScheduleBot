@@ -1,26 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace PrimatScheduleBot
 {
-    sealed class Stop : Command
+    [Serializable]
+    public sealed class Stop : ICommand
     {
-        private readonly long _chatId;
+        private readonly UIBehaviour _uiBehaviour;
 
-        public Stop(long chatId) : base(new Dictionary<MessageResult, string>
-            {
-                { MessageResult.ALLOWED, "Ви відписалися від щоденної розсилки розкладу."},
-                { MessageResult.DENIED, "Ви ще не підписані на щоденну розсилку розкладу."}
-            })
+        public Stop(UIBehaviour uiBehaviour) => _uiBehaviour = uiBehaviour;
+
+        public UI Execute(ChatInfo info)
         {
-            _chatId = chatId;
+            Validate(info.LastMessage);
+            TryStop(info.ChatId);
+
+            return _uiBehaviour.GetUI(info.LastMessage);
         }
 
-        public override string HandleAndSendAnswer()
+        private void TryStop(string chatId)
         {
-            bool canStop = PostScheduler.TryStop(_chatId).Result;
-            MessageResult result = canStop ? MessageResult.ALLOWED : MessageResult.DENIED;
+            var mailing = new Mailing(chatId);
 
-            return Messages.GetValueOrDefault(result);
-         }
+            mailing.Stop();
+        }
+
+        private void Validate(string message)
+        {
+            bool doesKeyExist = _uiBehaviour.IsSuchAKeyExist(message);
+
+            Validation.CorrectMessage(doesKeyExist);
+        }
     }
 }

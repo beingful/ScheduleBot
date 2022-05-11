@@ -1,30 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace PrimatScheduleBot
 {
-    sealed class Start : Command
+    [Serializable]
+    public class Start : ICommand
     {
-        private readonly string _botId;
-        private readonly long _chatId;
+        private readonly string _token;
+        private readonly UIBehaviour _uiBehaviour;
+        private IStartable _mailingList;
 
-        public Start(string botId, long chatId) : base(new Dictionary<MessageResult, string>
-            {
-                { MessageResult.ALLOWED, "Ви підписалися на щоденну розсилку розкладу. Очікуйте на повідомлення о 8:30 ранку."},
-                { MessageResult.DENIED, "Ви вже підписані на щоденну розсилку розкладу."}
-            })
+        public Start(string token, UIBehaviour uiBehaviour)
         {
-            _botId = botId;
-            _chatId = chatId;
+            _token = token;
+            _uiBehaviour = uiBehaviour;
         }
 
-        public override string HandleAndSendAnswer()
+        public UI Execute(ChatInfo info)
         {
-            if (PostScheduler.Start(_botId, _chatId).Result)
+            UI ui;
+
+            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage)) 
             {
-                return Messages.GetValueOrDefault(MessageResult.ALLOWED);
+                ui = _uiBehaviour.GetUI(info.LastMessage);
+            }
+            else
+            {
+                TryStart(info);
+
+                ui = new UI("Ви підписалися на щоденну розсилку.");
             }
 
-            return Messages.GetValueOrDefault(MessageResult.DENIED);
+            return ui;
+        }
+
+        private void TryStart(ChatInfo info)
+        {
+            Validation.NullValue(_mailingList);
+
+            TimeSpan time = TryGetTime(info.LastMessage);
+
+            _mailingList = new Mailing(info.ChatId);
+            _mailingList.Start(time, _token);
+        }
+
+        private TimeSpan TryGetTime(string message)
+        {
+            Validation.TimeIsValid(message);
+
+            return TimeSpan.Parse(message);
         }
     }
 }

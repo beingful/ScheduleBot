@@ -1,15 +1,14 @@
 ﻿using System;
 
-
 namespace PrimatScheduleBot
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Navigator navigator = new Navigator(Data.Token);
+            var bot = new Bot(Data.Token);
 
-            navigator.StartChating();
+            bot.StartChating();
 
             Console.ReadKey();
         }
