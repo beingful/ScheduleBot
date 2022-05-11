@@ -14,49 +14,67 @@ namespace PrimatScheduleBot
                         $"\nЯкщо ти ще не знайом зі мною, швидше тицяй на /introduce " +
                         $"і нумо за роботу!", Stickers.Typing,
                             new List<string> { Buttons.Start, Buttons.Stop, Buttons.Insert, Buttons.Edit }) }
+                    }), Transition(token))
+                },
+                { Commands.Help, new Command(new UIBehaviour(new Dictionary<string, UI>
+                    {
+                        { Commands.Help, new UI($"Привіт, мене звати Бізі Піггі, " +
+                        $"і я допоможу тобі легко і зручно керувати своїм розкладом. " +
+                        $"Ти зможеш додавати, видаляти і змінювати одноразові (на певну дату) чи циклічні (на день тижня) події. " +
+                        $"Циклічна подія відбуватиметься кожен тиждень в той день, який ти вкажеш. Але це ще не все! " +
+                        $"Ти також зможеш передивлятись розклад на певну дату чи день тижня. І це ще не все! " +
+                        $"Ти зможеш підписатися на розсилку розкладу. Що це значить? " +
+                        $"Кожен день рівно в зазначену тобою годину я надсилатиму тобі весь розклад на цей день! " +
+                        $"Правда круто?", new List<string> { Buttons.Yes })
+                        },
+                        { Buttons.Yes, new UI(null, Stickers.Love) }
+                    }), Transition(token) ) 
+                }
+            });
+        }
+
+        private static StateBehaviour Transition(string token)
+        {
+            return new StateBehaviour(new Dictionary<string, ICommand>
+            {
+                { Buttons.Start, new Start(token, new UIBehaviour(new Dictionary<string, UI>
+                    {
+                        { Buttons.Start, new UI("О котрій годині ви хочете отримувати сповіщення?") }
+                    }))
+                },
+                { Buttons.Stop, new Stop(new UIBehaviour(new Dictionary<string, UI>
+                    {
+                        { Buttons.Stop, new UI("Ви відписалися від щоденної розсилки.") }
+                    }))
+                },
+                { Buttons.Insert, new Command(new UIBehaviour(new Dictionary<string, UI>
+                    {
+                        { Buttons.Insert, new UI("Я можу додати подію в розклад на певну дату чи на день тижня, що обираєш?",
+                            new List<string> { Buttons.Date, Buttons.Day }) },
                     }), new StateBehaviour(new Dictionary<string, ICommand>
                     {
-                        { Buttons.Start, new Start(token, new UIBehaviour(new Dictionary<string, UI>
+                        { Buttons.Date, new Insert<Date>() },
+                        { Buttons.Day, new Insert<Day>() }
+                    }))
+                },
+                { Buttons.Edit, new Command(new UIBehaviour(new Dictionary<string, UI>
+                    {
+                        { Buttons.Edit, new UI("Я можу знайти твій росклад по даті або по дню тижня, обери свяй шлях...",
+                            new List<string> { Buttons.Date, Buttons.Day }) }
+                    }), new StateBehaviour(new Dictionary<string, ICommand>
+                    {
+                        { Buttons.Date, new Calendar<Date>(new UIBehaviour(new Dictionary<string, UI>
                             {
-                                { Buttons.Start, new UI("О котрій годині ви хочете отримувати сповіщення?") }
-                            })) 
-                        },
-                        { Buttons.Stop, new Stop(new UIBehaviour(new Dictionary<string, UI>
-                            {
-                                { Buttons.Stop, new UI("Ви відписалися від щоденної розсилки.") }
-                            })) 
-                        },
-                        { Buttons.Insert, new Command(new UIBehaviour(new Dictionary<string, UI>
-                            {
-                                { Buttons.Insert, new UI("Я можу додати подію в розклад на певну дату чи на день тижня, що обираєш?",
-                                    new List<string> { Buttons.Date, Buttons.Day }) },
-                            }), new StateBehaviour(new Dictionary<string, ICommand>
-                            {
-                                { Buttons.Date, new Insert<Date>() },
-                                { Buttons.Day, new Insert<Day>() }
+                                { Buttons.Date, new UI("Введи дату, щоб я зміг знайти твій розклад.") }
                             }))
                         },
-                        { Buttons.Edit, new Command(new UIBehaviour(new Dictionary<string, UI>
+                        { Buttons.Day, new Calendar<Day>(new UIBehaviour(new Dictionary<string, UI>
                             {
-                                { Buttons.Edit, new UI("Я можу знайти твій росклад по даті або по дню тижня, обери свяй шлях...",
-                                new List<string> { Buttons.Date, Buttons.Day }) }
-                            }), new StateBehaviour(new Dictionary<string, ICommand>
-                            {
-                                { Buttons.Date, new Calendar<Date>(new UIBehaviour(new Dictionary<string, UI>
-                                    {
-                                        { Buttons.Date, new UI("Введи дату, щоб я зміг знайти твій розклад.") }
-                                    }))
-                                },
-                                { Buttons.Day, new Calendar<Day>(new UIBehaviour(new Dictionary<string, UI>
-                                    {
-                                        { Buttons.Day, new UI("Введи день тижня, щоб я зміг знайти твій розклад.") }
-                                    })) 
-                                }
+                                { Buttons.Day, new UI("Введи день тижня, щоб я зміг знайти твій розклад.") }
                             }))
                         }
                     }))
-                },
-                { Commands.Help, new Introduction() }
+                }
             });
         }
     }

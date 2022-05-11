@@ -51,6 +51,6 @@ namespace PrimatScheduleBot
 
         public static void NotNull(object instance) => CorrectMessage(instance != null);
 
-        public static void NullValue(object instance) => Equal(instance, null);
+        public static void NullValue(object instance) => CorrectMessage(instance is null);
     }
 }

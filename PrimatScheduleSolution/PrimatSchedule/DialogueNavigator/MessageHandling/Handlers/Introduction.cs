@@ -7,9 +7,12 @@ namespace PrimatScheduleBot
     public sealed class Introduction : ICommand
     {
         private readonly UIBehaviour _ui;
+        private readonly StateBehaviour _state;
 
-        public Introduction()
+        public Introduction(StateBehaviour state)
         {
+            _state = state;
+
             _ui = new UIBehaviour(new Dictionary<string, UI>
             {
                 { Commands.Help, new UI($"Привіт, мене звати Бізі Піггі, " +
@@ -25,13 +28,20 @@ namespace PrimatScheduleBot
             });
         }
 
-        public UI Execute(ChatInfo info)
+        public UI Execute(ChatInfo info) 
         {
-            UI ui = _ui.GetUI(info.LastMessage);
+            //UI ui;
 
-            Validation.NotNull(ui);
+            //if (_ui.IsSuchAKeyExist(info.LastMessage))
+            //{
+            //    ui = _ui.GetUI(info.LastMessage);
+            //}
+            //else
+            //{
 
-            return ui;
+            //}
+
+            return null;
         }
     }
 }
