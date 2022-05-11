@@ -4,16 +4,16 @@ using System.Collections.Generic;
 namespace PrimatScheduleBot
 {
     [Serializable]
-    public sealed class Introduce : ICommand
+    public sealed class Introduction : ICommand
     {
         private readonly UIBehaviour _ui;
 
-        public Introduce()
+        public Introduction()
         {
             _ui = new UIBehaviour(new Dictionary<string, UI>
             {
-                { Commands.Help, new UI($"Привіт, я твій Щоденник! " +
-                $"Забудь про моїх паперових предків, адже зі мною ти можеш легко керувати своїм розкладом. " +
+                { Commands.Help, new UI($"Привіт, мене звати Піггі, " +
+                $"і я допоможу тобі легко і зручно керувати своїм розкладом. " +
                 $"Ти зможеш додавати, видаляти і змінювати одноразові (на певну дату) чи циклічні (на день тижня) події. " +
                 $"Циклічна подія відбуватиметься кожен тиждень в той день, який ти вкажеш. Але це ще не все! " +
                 $"Ти також зможеш передивлятись розклад на певну дату чи день тижня. І це ще не все! " +

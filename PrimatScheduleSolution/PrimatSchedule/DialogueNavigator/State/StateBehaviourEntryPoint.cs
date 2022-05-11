@@ -56,7 +56,7 @@ namespace PrimatScheduleBot
                         }
                     }))
                 },
-                { Commands.Help, new Introduce() }
+                { Commands.Help, new Introduction() }
             });
         }
     }
