@@ -11,8 +11,8 @@ namespace PrimatScheduleBot
                 { Commands.Start, new Command(new UIBehaviour(new Dictionary<string, UI>
                     {
                         { Commands.Start, new UI($"Привіт, я Бізі Піггі! " +
-                        $"Якщо ти ще не знайом зі мною, швидше тицяй на /introduce." +
-                        $"\nНу-мо за роботу!І", Stickers.Typing,
+                        $"\nЯкщо ти ще не знайом зі мною, швидше тицяй на /introduce " +
+                        $"і нумо за роботу!", Stickers.Typing,
                             new List<string> { Buttons.Start, Buttons.Stop, Buttons.Insert, Buttons.Edit }) }
                     }), new StateBehaviour(new Dictionary<string, ICommand>
                     {
