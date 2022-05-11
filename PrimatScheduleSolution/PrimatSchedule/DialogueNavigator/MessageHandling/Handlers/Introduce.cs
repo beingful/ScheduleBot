@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
+    [Serializable]
     public sealed class Introduce : ICommand
     {
         private readonly UIBehaviour _ui;
