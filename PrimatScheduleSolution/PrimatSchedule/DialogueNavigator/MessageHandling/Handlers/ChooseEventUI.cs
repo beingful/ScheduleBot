@@ -15,14 +15,7 @@ namespace PrimatScheduleBot
             _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> { { Buttons.Event, GetUI() } });
         }
 
-        private UI GetUI()
-        {
-            List<string> buttons = GetButtons();
-
-            string message = GetMessage();
-
-            return new UI(message, buttons);
-        }
+        private UI GetUI() => new UI(GetMessage(), GetButtons(), GetButtonsInTheRow());
 
         private List<string> GetButtons()
         {
@@ -34,6 +27,23 @@ namespace PrimatScheduleBot
             }
 
             return buttons;
+        }
+
+        private int GetButtonsInTheRow()
+        {
+            int number;
+            int maxNumber = 3;
+
+            if (_schedule.Count < maxNumber)
+            {
+                number = _schedule.Count % maxNumber;
+            }
+            else
+            {
+                number = maxNumber;
+            }
+
+            return number;
         }
 
         private string GetMessage()

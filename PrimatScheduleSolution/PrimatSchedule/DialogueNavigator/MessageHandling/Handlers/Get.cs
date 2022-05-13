@@ -32,7 +32,7 @@ namespace PrimatScheduleBot
 
         private List<Event> GetEvent(string chatId)
         {
-            var schedule = new Schedule(chatId, _date);
+            var schedule = new ScheduleGetter(chatId, _date);
 
             return schedule.Get();
         }

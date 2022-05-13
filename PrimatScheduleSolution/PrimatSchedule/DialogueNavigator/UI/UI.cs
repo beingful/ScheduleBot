@@ -9,40 +9,18 @@ namespace PrimatScheduleBot
     {
         public readonly string Question;
         public readonly string StickerId;
-        public readonly List<string> ButtonCaptions;
+        private readonly Keyboard _keyboard;
 
-        public UI(string question, List<string> buttonCaptions = null) 
-        {
-            Question = question;
-            ButtonCaptions = buttonCaptions;
-        }
+        public UI(string question) => Question = question;
 
-        public UI(string question, string stickerId, List<string> buttonCaptions = null) : this(question, buttonCaptions)
-        {
-            StickerId = stickerId;
-        }
+        public UI(string question, string stickerId) : this(question) => StickerId = stickerId;
 
-        public InlineKeyboardMarkup GetInlineKeyboard()
-        {
-            var keyboard = GetKeyboard();
+        public UI(string question, List<string> buttonCaptions, int buttonsInTheRow) : this(question)
+            => _keyboard = new Keyboard(buttonCaptions, buttonsInTheRow);
 
-            return new InlineKeyboardMarkup(keyboard);
-        }
+        public UI(string question, List<string> buttonCaptions, int buttonsInTheRow, string stickerId)
+            : this(question, buttonCaptions, buttonsInTheRow) => StickerId = stickerId;
 
-        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetKeyboard()
-        {
-            var keyboard = new List<List<InlineKeyboardButton>>();
-
-            for (int i = 0; i < ButtonCaptions?.Count; i++)
-            {
-                var keyBoardButtons = new List<InlineKeyboardButton>();
-
-                keyBoardButtons.Add(InlineKeyboardButton.WithCallbackData(ButtonCaptions[i]));
-
-                keyboard.Add(keyBoardButtons);
-            }
-
-            return keyboard;
-        }
+        public InlineKeyboardMarkup GetInlineKeyboard() => _keyboard?.Get();
     }
 }

@@ -12,8 +12,8 @@ namespace PrimatScheduleBot
                     {
                         { Commands.Start, new UI($"Привіт, я Бізі Піггі! " +
                         $"\nЯкщо ти ще не знайом зі мною, швидше тицяй на /introduce " +
-                        $"і нумо за роботу!", Stickers.Typing,
-                            new List<string> { Buttons.Start, Buttons.Stop, Buttons.Insert, Buttons.Edit }) }
+                        $"і нумо за роботу!",
+                        new List<string> { Buttons.Start, Buttons.Stop, Buttons.Insert, Buttons.Edit }, 1, Stickers.Typing) }
                     }), Transition(token))
                 },
                 { Commands.Help, new Command(new UIBehaviour(new Dictionary<string, UI>
@@ -25,7 +25,7 @@ namespace PrimatScheduleBot
                         $"Ти також зможеш передивлятись розклад на певну дату чи день тижня. І це ще не все! " +
                         $"Ти зможеш підписатися на розсилку розкладу. Що це значить? " +
                         $"Кожен день рівно в зазначену тобою годину я надсилатиму тобі весь розклад на цей день! " +
-                        $"Правда круто?", new List<string> { Buttons.Yes })
+                        $"Правда круто?", new List<string> { Buttons.Yes }, 1)
                         },
                         { Buttons.Yes, new UI(null, Stickers.Love) }
                     }), Transition(token) ) 
@@ -49,8 +49,8 @@ namespace PrimatScheduleBot
                 },
                 { Buttons.Insert, new Command(new UIBehaviour(new Dictionary<string, UI>
                     {
-                        { Buttons.Insert, new UI("Я можу додати подію в розклад на певну дату чи на день тижня, що обираєш?",
-                            new List<string> { Buttons.Date, Buttons.Day }) },
+                        { Buttons.Insert, new UI("Додати подію в розклад на дату чи на день тижня?",
+                        new List<string> { Buttons.Date, Buttons.Day }, 2) },
                     }), new StateBehaviour(new Dictionary<string, ICommand>
                     {
                         { Buttons.Date, new Insert<Date>() },
@@ -59,8 +59,8 @@ namespace PrimatScheduleBot
                 },
                 { Buttons.Edit, new Command(new UIBehaviour(new Dictionary<string, UI>
                     {
-                        { Buttons.Edit, new UI("Я можу знайти твій росклад по даті або по дню тижня, обери свяй шлях...",
-                            new List<string> { Buttons.Date, Buttons.Day }) }
+                        { Buttons.Edit, new UI("Знайти твій росклад по даті чи по дню тижня?",
+                        new List<string> { Buttons.Date, Buttons.Day }, 2) }
                     }), new StateBehaviour(new Dictionary<string, ICommand>
                     {
                         { Buttons.Date, new Calendar<Date>(new UIBehaviour(new Dictionary<string, UI>

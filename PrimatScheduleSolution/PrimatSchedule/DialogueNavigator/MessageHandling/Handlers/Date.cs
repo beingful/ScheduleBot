@@ -20,7 +20,7 @@ namespace PrimatScheduleBot
             return date;
         }
 
-        string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {date}";
+        string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {date.ToString("dd.MM.yyyy")}\n";
 
         Guid IPeriodicity.GetPeriodicity()
         {

@@ -19,6 +19,8 @@ namespace PrimatScheduleBot
 
                 Validation.EndAfterStart(@event.StartTime, @event.EndTime);
 
+                Validation.NotTooLate(@event.Date, @event.StartTime);
+
                 Validation.ValidateTimeForDuplications(@event);
             }
 

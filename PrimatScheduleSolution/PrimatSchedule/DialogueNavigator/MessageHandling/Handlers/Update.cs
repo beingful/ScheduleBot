@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace PrimatScheduleBot
 {
     [Serializable]
     public sealed class Update<T> : ICommand where T : IPeriodicity, new()
     {
-        private readonly Event _event;
-        private readonly UIBehaviour _uiBehaviour;
+        private readonly Guid _eventId;
+        private Event _event;
 
-        public Update(Event @event)
-        {
-            _event = @event;
-            _uiBehaviour = new UIBehaviour(new Dictionary<string, UI> 
-            { 
-                { Buttons.Update, GetUI(@event) } 
-            });
-        }
+        public Update(Guid eventId) => _eventId = eventId;
 
-        private UI GetUI(Event @event)
+        private UI GetUI()
         {
-            var parser = new EventToMessage(@event);
+            var parser = new EventToMessage(_event);
 
             string message = "Внесіть корективи і надішліть мені наступний шаблон:\n\n" 
                 + $"`{ parser.ParseAll<T>() }`";
@@ -28,13 +20,22 @@ namespace PrimatScheduleBot
             return new UI(message);
         }
 
+        private Event TryGetEvent()
+        {
+            var getter = new EventGetter(_eventId);
+
+            return getter.TryGetEvent();
+        }
+
         public UI Execute(ChatInfo info)
         {
             UI ui;
 
-            if (_uiBehaviour.IsSuchAKeyExist(info.LastMessage))
+            if (info.LastMessage is Buttons.Update)
             {
-                ui = _uiBehaviour.GetUI(info.LastMessage);
+                _event = TryGetEvent();
+
+                ui = GetUI();
             }
             else
             {

@@ -24,16 +24,29 @@ namespace PrimatScheduleBot
 
         public void RemoveAllBeforeToday() 
         {
-            List<Event> events = GetAllWhere(@event => @event.Date < DateTime.Today);
+            using var facade = new PeriodicityFacade();
+
+            List<Event> events = GetAllWhere(@event => @event.Date < DateTime.Today 
+                && @event.PeriodicityId == facade.GetDailyPeriodicityId());
 
             _repository.RemoveRange(events);
-        }
+        }   
 
-        public void Remove(Guid id)
+        public void Remove(Event @event) => _repository.Remove(@event);
+
+        public void AddWeek()
         {
-            Event @event = _repository.GetAll().First(@event => @event.Id == id);
+            using var facade = new PeriodicityFacade();
 
-            _repository.Remove(@event);
+            List<Event> events = GetAllWhere(@event => @event.Date < DateTime.Today 
+                && @event.PeriodicityId == facade.GetWeeklyPeriodicityId());
+
+            foreach (var @event in events)
+            {
+                @event.Date = @event.Date.AddDays(7);
+
+                Update(@event);
+            }
         }
 
         public List<Event> GetByDate(string chatId, DateTime date) 

@@ -45,7 +45,7 @@ namespace PrimatScheduleBot
             _currentSate = new Command(new UIBehaviour(new Dictionary<string, UI>
             {
                 { info.LastMessage, new UI("Що робимо далі?", 
-                new List<string> { Buttons.Get, Buttons.Event }) }
+                new List<string> { Buttons.Get, Buttons.Event }, 2) }
             }), new StateBehaviour(new Dictionary<string, ICommand>
             {
                 { Buttons.Get, new Get(date) },

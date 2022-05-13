@@ -27,6 +27,9 @@ namespace PrimatScheduleBot
         public static void ScheduleNotEmpty(int eventCount)
             => Validate(new Polygraph<NoOneScheduleException>(eventCount > 0));
 
+        public static void NotTooLate(DateTime date, TimeSpan? time)
+            => Validate(new Polygraph<TooLateException>(!(date == DateTime.Now.Date && time.LessOrEqual(DateTime.Now.TimeOfDay))));
+
         public static void RequiredIsNotDefault(object instance)
             => Validate(new FullValidationMode<IsDefaultAttribute, NullValueException>(instance));
 

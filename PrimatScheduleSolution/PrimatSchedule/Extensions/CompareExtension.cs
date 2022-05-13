@@ -16,6 +16,18 @@ namespace PrimatScheduleBot
             return result;
         }
 
+        public static bool LessOrEqual<T>(this T? value, T? compared) where T : struct, IComparable<T>
+        {
+            bool result = false;
+
+            if (value != null)
+            {
+                result = value.Value.CompareTo(compared.Value) != 1;
+            }
+
+            return result;
+        }
+
         public static bool EqualsTo(this object value, object compared) 
         {
             bool result = false;

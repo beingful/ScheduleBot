@@ -7,11 +7,10 @@ namespace PrimatScheduleBot
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            var facade = new EventFacade();
+            using var facade = new EventFacade();
 
             facade.RemoveAllBeforeToday();
-
-            facade.Dispose();
+            facade.AddWeek();
         }
     }
 }

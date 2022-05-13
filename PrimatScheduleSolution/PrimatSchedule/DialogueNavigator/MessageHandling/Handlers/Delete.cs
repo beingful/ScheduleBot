@@ -16,11 +16,20 @@ namespace PrimatScheduleBot
             return new UI("Я видалив подію із розкладу.", Stickers.Done); ;
         }
 
+        private Event TryGetEvent()
+        {
+            var getter = new EventGetter(_eventId);
+
+            return getter.TryGetEvent();
+        }
+
         private void DeleteEvent()
         {
+            Event @event = TryGetEvent();
+
             using var facade = new EventFacade();
 
-            facade.Remove(_eventId);
+            facade.Remove(@event);
         }
     }
 }

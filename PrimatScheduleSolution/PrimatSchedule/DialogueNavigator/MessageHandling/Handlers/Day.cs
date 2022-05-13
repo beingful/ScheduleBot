@@ -13,7 +13,7 @@ namespace PrimatScheduleBot
 
         private string DayFromDate(DateTime date)
         {
-            int dayNumber = date.Day;
+            int dayNumber = (int)date.DayOfWeek;
 
             return DaysOfWeek.GetDay(dayNumber);
         }
@@ -32,7 +32,7 @@ namespace PrimatScheduleBot
             return GetDateByDay(message);
         }
 
-        string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {DayFromDate(date)}";
+        string IPeriodicity.GetProperty(DateTime date) => $"{Name}: {DayFromDate(date)}\n";
 
         Guid IPeriodicity.GetPeriodicity()
         {

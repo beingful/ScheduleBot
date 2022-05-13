@@ -26,7 +26,7 @@ namespace PrimatScheduleBot
 
         private void SetSchedule(string chatId)
         {
-            var schedule = new Schedule(chatId, _date);
+            var schedule = new ScheduleGetter(chatId, _date);
 
             _schedule = schedule.Get();
         }
@@ -95,10 +95,10 @@ namespace PrimatScheduleBot
             return new Command(new UIBehaviour(new Dictionary<string, UI>
             {
                 { message, new UI("Що ви хочете зробити з цією подією?",
-                new List<string> { Buttons.Delete, Buttons.Update }) }
+                new List<string> { Buttons.Delete, Buttons.Update }, 2) }
             }), new StateBehaviour(new Dictionary<string, ICommand>
             {
-                { Buttons.Update, new Update<T>(@event) },
+                { Buttons.Update, new Update<T>(@event.Id) },
                 { Buttons.Delete, new Delete(@event.Id) }
             }));
         }
