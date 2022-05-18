@@ -59,7 +59,7 @@ namespace PrimatScheduleBot
                 },
                 { Buttons.Edit, new Command(new UIBehaviour(new Dictionary<string, UI>
                     {
-                        { Buttons.Edit, new UI("Знайти твій росклад по даті чи по дню тижня?",
+                        { Buttons.Edit, new UI("Знайти твій розклад по даті чи по дню тижня?",
                         new List<string> { Buttons.Date, Buttons.Day }, 2) }
                     }), new StateBehaviour(new Dictionary<string, ICommand>
                     {
