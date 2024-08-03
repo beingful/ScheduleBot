@@ -1,42 +1,42 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PrimatScheduleBot.Extensions;
 
-namespace PrimatScheduleBot
+namespace PrimatScheduleBot;
+
+class Program
 {
-    class Program
+    static async Task Main()
     {
-        static async Task Main()
+        var builder = WebApplication.CreateBuilder();
+
+        builder.Logging.AddAzureWebAppDiagnostics();
+
+        builder.Services
+            .AddAzureAuthentication(builder.Configuration)
+            .AddWebhook(builder.Configuration)
+            .AddRequestHandling()
+            .AddSwagger();
+
+        using var app = builder.Build();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
+        app.AddSwaggerSupport();
+
+        //host.AddPost(botConfiguration);
+
+        /*host.MapGet("/claims", (GetService getService) =>
         {
-            var builder = new HostBuilder();
+            string claims = getService.GetClaims();
 
-            builder.ConfigureWebJobs(b =>
-            {
-                b.AddAzureStorageCoreServices();
-                b.AddAzureStorageBlobs();
-            });
+            return Results.Ok(new { Value = claims });
+        });*/
 
-            builder.ConfigureLogging((context, b) =>
-            {
-                b.AddConsole();
-
-                string instrumentationKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-
-                if (!string.IsNullOrEmpty(instrumentationKey))
-                {
-                    b.AddApplicationInsightsWebJobs(o => o.InstrumentationKey = instrumentationKey);
-                }
-            });
-
-            builder.UseEnvironment(EnvironmentName.Development);
-
-            using var host = builder.Build();
-
-            var bot = new Bot(Data.Token);
-
-            bot.StartChating();
-
-            await host.RunAsync();
-        }
+        await app.RunAsync();
     }
 }
